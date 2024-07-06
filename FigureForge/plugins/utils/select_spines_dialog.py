@@ -1,4 +1,11 @@
-from PySide6.QtWidgets import QMessageBox, QVBoxLayout, QCheckBox, QDialogButtonBox, QDialog
+from PySide6.QtWidgets import (
+    QMessageBox,
+    QVBoxLayout,
+    QCheckBox,
+    QDialogButtonBox,
+    QDialog,
+)
+
 
 class SelectSpinesDialog(QDialog):
     def __init__(self):
