@@ -50,6 +50,8 @@ class FigureManager(QWidget):
         self.fe.itemSelected.connect(self.on_item_selected)
         self.pi.propertyChanged.connect(self.on_property_changed)
 
+        self.selected_item = None
+
     def load_figure(self, file_name):
         self.new_figure()
         with open(file_name, "rb") as file:
