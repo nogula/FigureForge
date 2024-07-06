@@ -82,6 +82,11 @@ class MainWindow(QMainWindow):
         file_menu.addAction(quit_action)
 
         edit_menu = menubar.addMenu("Edit")
+        delete_item_action = QAction("Delete Item", self)
+        delete_item_action.triggered.connect(self.delete_item)
+        delete_item_action.setIcon(QIcon("FigureForge/resources/icons/delete_icon.png"))
+        delete_item_action.setShortcut("Del")
+        edit_menu.addAction(delete_item_action)
 
         self.plugin_menu = menubar.addMenu("Plugins")
         self.load_plugins()
@@ -269,3 +274,6 @@ class MainWindow(QMainWindow):
             self.fm.canvas.draw()
             self.fm.unsaved_changes = True
             self.fm.fe.build_tree(self.fm.figure)
+
+    def delete_item(self):
+        self.fm.delete_item()
