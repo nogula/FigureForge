@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "figureforge"
+version = "0.1.0"
+description = ""
+authors = ["Noah Gula <noahrgula@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+numpy = "^2.0.0"
+pandas = "^2.2.2"
+matplotlib = "^3.9.1"
+PySide6 = "^6.7.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
