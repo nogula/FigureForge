@@ -73,15 +73,16 @@ class MainWindow(QMainWindow):
         file_menu.addAction(quit_action)
 
         edit_menu = menubar.addMenu("Edit")
-        self.plugin_menu = edit_menu.addMenu("Plugins")
+
+        self.plugin_menu = menubar.addMenu("Plugins")
         self.load_plugins()
-        edit_menu.addSeparator()
+        self.plugin_menu.addSeparator()
         open_plugins_folder_action = QAction("Open Plugins Folder...", self)
         open_plugins_folder_action.triggered.connect(self.open_plugins_folder)
-        edit_menu.addAction(open_plugins_folder_action)
+        self.plugin_menu.addAction(open_plugins_folder_action)
         plugins_documentation_action = QAction("Plugins Documentation", self)
         plugins_documentation_action.triggered.connect(self.plugins_documentation)
-        edit_menu.addAction(plugins_documentation_action)
+        self.plugin_menu.addAction(plugins_documentation_action)
 
         help_menu = menubar.addMenu("Help")
 
@@ -256,3 +257,5 @@ class MainWindow(QMainWindow):
             plugin = plugin_class()
             plugin.run(selected_item)
             self.fm.canvas.draw()
+            self.fm.unsaved_changes = True
+            self.fm.fe.build_tree(self.fm.figure)
