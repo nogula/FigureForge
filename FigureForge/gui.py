@@ -1,3 +1,4 @@
+from math import e
 from msilib.schema import Property
 from PySide6.QtWidgets import (
     QApplication,
@@ -39,30 +40,37 @@ class MainWindow(QMainWindow):
         menubar = self.menuBar()
 
         file_menu = menubar.addMenu("File")
+
         new_action = QAction("New", self)
         new_action.setIcon(QIcon("FigureForge/resources/icons/new_icon.png"))
+        new_action.setShortcut("Ctrl+N")
         new_action.triggered.connect(self.new_file)
-
         file_menu.addAction(new_action)
+
         open_action = QAction("Open...", self)
         open_action.setIcon(QIcon("FigureForge/resources/icons/open_icon.png"))
+        open_action.setShortcut("Ctrl+O")
         open_action.triggered.connect(self.open_file)
-
         file_menu.addAction(open_action)
+
         save_action = QAction("Save", self)
         save_action.setIcon(QIcon("FigureForge/resources/icons/save_icon.png"))
+        save_action.setShortcut("Ctrl+S")
         save_action.triggered.connect(self.save_file)
-
         file_menu.addAction(save_action)
+
         save_as_action = QAction("Save As...", self)
         save_as_action.setIcon(QIcon("FigureForge/resources/icons/save_as_icon.png"))
+        save_as_action.setShortcut("Ctrl+Shift+S")
         save_as_action.triggered.connect(self.save_as_file)
+        file_menu.addAction(save_as_action)
 
         file_menu.addSeparator()
 
         export_action = QAction("Export", self)
         export_action.triggered.connect(self.export_figure)
         export_action.setIcon(QIcon("FigureForge/resources/icons/export_icon.png"))
+        export_action.setShortcut("Ctrl+E")
         file_menu.addAction(export_action)
 
         file_menu.addSeparator()
@@ -70,6 +78,7 @@ class MainWindow(QMainWindow):
         quit_action = QAction("Quit", self)
         quit_action.triggered.connect(self.quit)
         quit_action.setIcon(QIcon("FigureForge/resources/icons/quit_icon.png"))
+        quit_action.setShortcut("Ctrl+Q")
         file_menu.addAction(quit_action)
 
         edit_menu = menubar.addMenu("Edit")
@@ -168,10 +177,11 @@ class MainWindow(QMainWindow):
 
     def save_as_file(self):
         options = QFileDialog.Options()
-        self.fm.file_name, _ = QFileDialog.getSaveFileName(
+        file_name, _ = QFileDialog.getSaveFileName(
             self, "Save File", "", "Figure Files (*.pkl)", options=options
         )
-        if self.fm.file_name:
+        if file_name:
+            self.fm.file_name = file_name
             self.fm.save_figure(self.fm.file_name)
 
     def export_figure(self):
