@@ -9,14 +9,17 @@ from PySide6.QtWidgets import (
     QMenuBar,
     QMainWindow,
     QMessageBox,
+    QStatusBar,
 )
-from PySide6.QtCore import Qt, QUrl
-from PySide6.QtGui import QFont, QDesktopServices, QIcon, QAction
+from PySide6.QtCore import Qt, QUrl, QObject
+from PySide6.QtGui import QFont, QDesktopServices, QIcon, QAction, QCursor
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
 from .utils import FigureExplorer, FigureManager, PropertyInspector
+import os
+import importlib
 
 
 class MainWindow(QMainWindow):
@@ -69,6 +72,8 @@ class MainWindow(QMainWindow):
         file_menu.addAction(quit_action)
 
         edit_menu = menubar.addMenu("Edit")
+        self.plugin_menu = edit_menu.addMenu("Plugins")
+        self.load_plugins()
 
         help_menu = menubar.addMenu("Help")
 
@@ -194,3 +199,34 @@ class MainWindow(QMainWindow):
         """Open the issues page for the GitHub project."""
         url = QUrl("https://github.com/nogula/FigureForge/issues/new")
         QDesktopServices.openUrl(url)
+
+    def load_plugins(self):
+
+        plugin_dir = os.path.join(os.path.dirname(__file__), "plugins")
+        if not os.path.exists(plugin_dir):
+            return
+
+        for file_name in os.listdir(plugin_dir):
+            if file_name.endswith(".py"):
+                module_name = file_name[:-3]
+                module_path = os.path.join(plugin_dir, file_name)
+                try:
+                    module = importlib.import_module(f"FigureForge.plugins.{module_name}")
+                    print(module.__dict__)
+                    for name, obj in module.__dict__.items():
+                        if isinstance(obj, type):# and issubclass(obj, QObject):
+                            plugin = obj()
+                            action = QAction(plugin.name, self)
+                            action.setToolTip(plugin.tooltip)
+                            action.setIcon(QIcon(plugin.icon))
+                            action.triggered.connect(lambda checked, obj=obj: self.run_plugin(obj))
+                            self.plugin_menu.addAction(action)
+                except Exception as e:
+                    print(f"Failed to load plugin {module_name}: {e}")
+
+    def run_plugin(self, plugin_class):
+        selected_item = self.fm.selected_item
+        if selected_item:
+            plugin = plugin_class()
+            plugin.run(selected_item)
+            self.fm.canvas.draw()
