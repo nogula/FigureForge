@@ -75,6 +75,13 @@ class MainWindow(QMainWindow):
         edit_menu = menubar.addMenu("Edit")
         self.plugin_menu = edit_menu.addMenu("Plugins")
         self.load_plugins()
+        edit_menu.addSeparator()
+        open_plugins_folder_action = QAction("Open Plugins Folder...", self)
+        open_plugins_folder_action.triggered.connect(self.open_plugins_folder)
+        edit_menu.addAction(open_plugins_folder_action)
+        plugins_documentation_action = QAction("Plugins Documentation", self)
+        plugins_documentation_action.triggered.connect(self.plugins_documentation)
+        edit_menu.addAction(plugins_documentation_action)
 
         help_menu = menubar.addMenu("Help")
 
@@ -185,6 +192,14 @@ class MainWindow(QMainWindow):
                 return
         else:
             self.close()
+
+    def open_plugins_folder(self):
+        path = os.path.join(os.path.dirname(__file__), "plugins")
+        QDesktopServices.openUrl(QUrl.fromLocalFile(path))
+
+    def plugins_documentation(self):
+        url = QUrl("https://github.com/nogula/FigureForge/wiki/Plugins")
+        QDesktopServices.openUrl(url)
 
     def about_pressed(self):
         """Open the GitHub page for this project."""
