@@ -98,6 +98,7 @@ class FigureManager(QWidget):
         self.canvas.draw()
         self.unsaved_changes = True
 
+
 class PropertyInspector(QWidget):
     propertyChanged = Signal(str, object)
 

@@ -20,6 +20,7 @@ import pandas as pd
 from .utils import FigureExplorer, FigureManager, PropertyInspector
 import os
 import importlib
+import inspect
 
 
 class MainWindow(QMainWindow):
@@ -211,15 +212,25 @@ class MainWindow(QMainWindow):
                 module_name = file_name[:-3]
                 module_path = os.path.join(plugin_dir, file_name)
                 try:
-                    module = importlib.import_module(f"FigureForge.plugins.{module_name}")
-                    print(module.__dict__)
-                    for name, obj in module.__dict__.items():
-                        if isinstance(obj, type):# and issubclass(obj, QObject):
-                            plugin = obj()
-                            action = QAction(plugin.name, self)
-                            action.setToolTip(plugin.tooltip)
-                            action.setIcon(QIcon(plugin.icon))
-                            action.triggered.connect(lambda checked, obj=obj: self.run_plugin(obj))
+                    module = importlib.import_module(
+                        f"FigureForge.plugins.{module_name}"
+                    )
+                    classes = [
+                        cls
+                        for cls in inspect.getmembers(module, inspect.isclass)
+                        if cls[1].__module__ == module.__name__
+                    ]
+                    for cls in classes:
+                        cls = cls[1]
+                        if isinstance(cls, type):
+                            action = QAction(cls.name, self)
+                            if hasattr(cls, "tooltip"):
+                                action.setToolTip(cls.tooltip)
+                            if hasattr(cls, "icon"):
+                                action.setIcon(QIcon(cls.icon))
+                            action.triggered.connect(
+                                lambda checked, obj=cls: self.run_plugin(obj)
+                            )
                             self.plugin_menu.addAction(action)
                 except Exception as e:
                     print(f"Failed to load plugin {module_name}: {e}")
