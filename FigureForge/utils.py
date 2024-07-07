@@ -31,10 +31,19 @@ from PySide6.QtWidgets import (
     QRubberBand,
     QSizePolicy,
     QSpacerItem,
-
 )
 from PySide6.QtGui import QFocusEvent, QFont, QColor, QDrag, QPen, QBrush, QPainter
-from PySide6.QtCore import Qt, Signal, QMimeData, QRectF, QSizeF, Slot, QRect, QPoint, QObject
+from PySide6.QtCore import (
+    Qt,
+    Signal,
+    QMimeData,
+    QRectF,
+    QSizeF,
+    Slot,
+    QRect,
+    QPoint,
+    QObject,
+)
 
 import pickle
 import json
@@ -51,6 +60,7 @@ import matplotlib.text as mtext
 from matplotlib.gridspec import GridSpec
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 class FigureManager(QWidget):
     def __init__(self):
@@ -76,7 +86,7 @@ class FigureManager(QWidget):
 
         self.selected_item = None
 
-        with open(os.path.join(CURRENT_DIR,"structure.json")) as file:
+        with open(os.path.join(CURRENT_DIR, "structure.json")) as file:
             self.structure = json.load(file)
 
     def load_figure(self, file_name):
@@ -118,22 +128,17 @@ class FigureManager(QWidget):
             if "get_index" in properties[name]:
                 value = getattr(self.selected_item, properties[name]["get"])()
                 try:
-                    value = value[
-                        properties[name]["get_index"]
-                    ]
+                    value = value[properties[name]["get_index"]]
                 except TypeError:
                     value = value
             else:
                 value = getattr(self.selected_item, properties[name]["get"])()
-            print(property, value)
             self.pi.add_property(name, value_type, value, value_options)
 
     def on_property_changed(self, property_name, value):
         item = self.selected_item
         item_class = item.__class__.__name__
-        set_method = self.structure[item_class]["attributes"][
-            property_name
-        ]["set"]
+        set_method = self.structure[item_class]["attributes"][property_name]["set"]
         if "set_parameter" in self.structure[item_class]["attributes"][property_name]:
             parameter = self.structure[item_class]["attributes"][property_name][
                 "set_parameter"
@@ -158,14 +163,14 @@ class FigureManager(QWidget):
         self.fe.build_tree(self.figure)
         self.selected_item = None
 
-    def attempt_delete(self,item):
+    def attempt_delete(self, item):
         try:
             item.remove()
         except NotImplementedError:
             QMessageBox.critical(self, "Error", "Cannot delete this item.")
 
     def convert_to_gridspec(self, figure):
-        
+
         pass
         # axs = figure.get_axes()
         # if isinstance(axs, np.ndarray):
