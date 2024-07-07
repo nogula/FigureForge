@@ -11,6 +11,9 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMessageBox,
     QStatusBar,
+    QPushButton,
+    QHBoxLayout,
+    QLabel,
 )
 from PySide6.QtCore import Qt, QUrl, QObject
 from PySide6.QtGui import QFont, QDesktopServices, QIcon, QAction, QCursor
@@ -31,7 +34,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(800, 600)
 
         self.create_menus()
-        self.setup_ui()
+        self.init_ui()
 
         self.show()
 
@@ -82,6 +85,14 @@ class MainWindow(QMainWindow):
         file_menu.addAction(quit_action)
 
         edit_menu = menubar.addMenu("Edit")
+        configure_gridspec_action = QAction("Configure Gridspec", self)
+        configure_gridspec_action.triggered.connect(self.configure_gridspec)
+        configure_gridspec_action.setIcon(QIcon("FigureForge/resources/icons/gridspec_icon.png"))
+        configure_gridspec_action.setShortcut("Ctrl+G")
+        edit_menu.addAction(configure_gridspec_action)
+
+        edit_menu.addSeparator()
+
         delete_item_action = QAction("Delete Item", self)
         delete_item_action.triggered.connect(self.delete_item)
         delete_item_action.setIcon(QIcon("FigureForge/resources/icons/delete_icon.png"))
@@ -115,21 +126,83 @@ class MainWindow(QMainWindow):
         bug_action.setIcon(QIcon("FigureForge/resources/icons/bug_icon.png"))
         help_menu.addAction(bug_action)
 
-    def setup_ui(self):
+    def init_ui(self):
         splitter = QSplitter(Qt.Horizontal)
+        splitter.setContentsMargins(0,0,0,0)
+        splitter.setStyleSheet(
+            """
+                QSplitter::handle {
+                    background: lightgray;
+                }
+                QSplitter::handle:vertical {
+                    width: 2px;
+                }
+            """
+        )
 
         self.fm = FigureManager()
         self.fe = self.fm.fe
         self.pi = self.fm.pi
 
         left_splitter = QSplitter(Qt.Vertical)
-        left_splitter.addWidget(self.fe)
-        left_splitter.addWidget(self.pi)
+        left_splitter.setContentsMargins(0, 0, 5, 0)
+        left_splitter.setStyleSheet(
+            """
+            QSplitter::handle {
+                background: lightgray;
+            }
+            QSplitter::handle:vertical {
+                height: 2px;
+            }
+            """
+        )
+
+        fe_header_layout = QHBoxLayout()
+        fe_header_layout.setContentsMargins(0, 0, 0, 0)
+        fe_header_widget = QWidget()
+
+        fe_header_label = QLabel("Figure Explorer")
+
+        refresh_button = QPushButton("Refresh")
+        refresh_button.clicked.connect(self.refresh_display)
+        refresh_button.setIcon(QIcon("FigureForge/resources/icons/refresh_icon.png"))
+
+        fe_header_layout.addWidget(fe_header_label)
+        fe_header_layout.addStretch()
+        fe_header_layout.addWidget(refresh_button)
+        fe_header_widget.setLayout(fe_header_layout)
+
+        fe_layout = QVBoxLayout()
+        fe_layout.setContentsMargins(0, 0, 0, 5)
+        fe_widget = QWidget()
+        fe_layout.addWidget(fe_header_widget)
+        fe_layout.addWidget(self.fe)
+        
+        fe_widget.setLayout(fe_layout)
+        left_splitter.addWidget(fe_widget)
+        
+
+        # left_splitter.addWidget(self.fe)
+        pi_layout = QVBoxLayout()
+        pi_layout.setContentsMargins(0, 5, 5, 0)
+        pi_header_widget = QLabel("Property Inspector")
+        pi_layout.addWidget(pi_header_widget)
+        pi_layout.addWidget(self.pi)
+        pi_widget = QWidget()
+        pi_widget.setLayout(pi_layout)
+
+        left_splitter.addWidget(pi_widget)
 
         splitter.addWidget(left_splitter)
-        splitter.addWidget(self.fm.canvas)
+
+        figure_widget = QWidget()
+        figure_layout = QVBoxLayout(figure_widget)
+        figure_layout.setContentsMargins(5, 0, 0, 0)
+        figure_layout.addWidget(self.fm.canvas)
+        splitter.addWidget(figure_widget)
 
         main_widget = QWidget()
+        # main_widget.setStyleSheet("border: 2px solid red;")
         main_layout = QVBoxLayout(main_widget)
         main_layout.addWidget(splitter)
         self.setCentralWidget(main_widget)
@@ -277,3 +350,10 @@ class MainWindow(QMainWindow):
 
     def delete_item(self):
         self.fm.delete_item()
+
+    def configure_gridspec(self):
+        self.fm.configure_gridspec()
+
+    def refresh_display(self):
+        self.fm.canvas.draw()
+        self.fm.fe.build_tree(self.fm.figure)
