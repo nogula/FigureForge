@@ -1,37 +1,36 @@
-from math import e
-from msilib.schema import Property
 from PySide6.QtWidgets import (
-    QApplication,
     QWidget,
     QSplitter,
     QFileDialog,
-    QTreeView,
     QVBoxLayout,
-    QMenuBar,
     QMainWindow,
     QMessageBox,
-    QStatusBar,
     QPushButton,
     QHBoxLayout,
     QLabel,
+    QDialog,
+    QGridLayout,
 )
-from PySide6.QtCore import Qt, QUrl, QObject
-from PySide6.QtGui import QFont, QDesktopServices, QIcon, QAction, QCursor
+from PySide6.QtCore import Qt, QUrl, QObject, QSize
+from PySide6.QtGui import QFont, QDesktopServices, QIcon, QAction, QCursor, QPixmap
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
 from .utils import FigureExplorer, FigureManager, PropertyInspector
+from .__init__ import __version__
 import os
 import importlib
 import inspect
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("FigureForge")
+        self.setWindowIcon(QIcon(os.path.join(CURRENT_DIR, "resources/icons/logo.png")))
         self.setMinimumSize(800, 600)
 
         self.create_menus()
@@ -46,25 +45,33 @@ class MainWindow(QMainWindow):
         file_menu = menubar.addMenu("File")
 
         new_action = QAction("New", self)
-        new_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/new_icon.png")))
+        new_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/new_icon.png"))
+        )
         new_action.setShortcut("Ctrl+N")
         new_action.triggered.connect(self.new_file)
         file_menu.addAction(new_action)
 
         open_action = QAction("Open...", self)
-        open_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/open_icon.png")))
+        open_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/open_icon.png"))
+        )
         open_action.setShortcut("Ctrl+O")
         open_action.triggered.connect(self.open_file)
         file_menu.addAction(open_action)
 
         save_action = QAction("Save", self)
-        save_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/save_icon.png")))
+        save_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/save_icon.png"))
+        )
         save_action.setShortcut("Ctrl+S")
         save_action.triggered.connect(self.save_file)
         file_menu.addAction(save_action)
 
         save_as_action = QAction("Save As...", self)
-        save_as_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/save_as_icon.png")))
+        save_as_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/save_as_icon.png"))
+        )
         save_as_action.setShortcut("Ctrl+Shift+S")
         save_as_action.triggered.connect(self.save_as_file)
         file_menu.addAction(save_as_action)
@@ -73,7 +80,9 @@ class MainWindow(QMainWindow):
 
         export_action = QAction("Export", self)
         export_action.triggered.connect(self.export_figure)
-        export_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/export_icon.png")))
+        export_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/export_icon.png"))
+        )
         export_action.setShortcut("Ctrl+E")
         file_menu.addAction(export_action)
 
@@ -81,14 +90,18 @@ class MainWindow(QMainWindow):
 
         quit_action = QAction("Quit", self)
         quit_action.triggered.connect(self.quit)
-        quit_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/quit_icon.png")))
+        quit_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/quit_icon.png"))
+        )
         quit_action.setShortcut("Ctrl+Q")
         file_menu.addAction(quit_action)
 
         edit_menu = menubar.addMenu("Edit")
         configure_gridspec_action = QAction("Configure Gridspec", self)
         configure_gridspec_action.triggered.connect(self.configure_gridspec)
-        configure_gridspec_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/gridspec_icon.png")))
+        configure_gridspec_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/gridspec_icon.png"))
+        )
         configure_gridspec_action.setShortcut("Ctrl+G")
         edit_menu.addAction(configure_gridspec_action)
 
@@ -96,7 +109,9 @@ class MainWindow(QMainWindow):
 
         delete_item_action = QAction("Delete Item", self)
         delete_item_action.triggered.connect(self.delete_item)
-        delete_item_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/delete_icon.png")))
+        delete_item_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/delete_icon.png"))
+        )
         delete_item_action.setShortcut("Del")
         edit_menu.addAction(delete_item_action)
 
@@ -114,22 +129,28 @@ class MainWindow(QMainWindow):
 
         about_action = QAction("About", self)
         about_action.triggered.connect(self.about_pressed)
-        about_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/about_icon.png")))
+        about_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/about_icon.png"))
+        )
         help_menu.addAction(about_action)
 
         help_action = QAction("Help", self)
         help_action.triggered.connect(self.help_pressed)
-        help_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/documentation_icon.png")))
+        help_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/documentation_icon.png"))
+        )
         help_menu.addAction(help_action)
 
         bug_action = QAction("Report Bug", self)
         bug_action.triggered.connect(self.bug_pressed)
-        bug_action.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/bug_icon.png")))
+        bug_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/bug_icon.png"))
+        )
         help_menu.addAction(bug_action)
 
     def init_ui(self):
         splitter = QSplitter(Qt.Horizontal)
-        splitter.setContentsMargins(0,0,0,0)
+        splitter.setContentsMargins(0, 0, 0, 0)
         splitter.setStyleSheet(
             """
                 QSplitter::handle {
@@ -166,7 +187,9 @@ class MainWindow(QMainWindow):
 
         refresh_button = QPushButton("Refresh")
         refresh_button.clicked.connect(self.refresh_display)
-        refresh_button.setIcon(QIcon(os.path.join(CURRENT_DIR,"resources/icons/refresh_icon.png")))
+        refresh_button.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/refresh_icon.png"))
+        )
 
         fe_header_layout.addWidget(fe_header_label)
         fe_header_layout.addStretch()
@@ -178,10 +201,9 @@ class MainWindow(QMainWindow):
         fe_widget = QWidget()
         fe_layout.addWidget(fe_header_widget)
         fe_layout.addWidget(self.fe)
-        
+
         fe_widget.setLayout(fe_layout)
         left_splitter.addWidget(fe_widget)
-        
 
         # left_splitter.addWidget(self.fe)
         pi_layout = QVBoxLayout()
@@ -284,7 +306,7 @@ class MainWindow(QMainWindow):
             self.close()
 
     def open_plugins_folder(self):
-        path = os.path.join(CURRENT_DIR,"plugins")
+        path = os.path.join(CURRENT_DIR, "plugins")
         QDesktopServices.openUrl(QUrl.fromLocalFile(path))
 
     def plugins_documentation(self):
@@ -292,9 +314,55 @@ class MainWindow(QMainWindow):
         QDesktopServices.openUrl(url)
 
     def about_pressed(self):
-        """Open the GitHub page for this project."""
-        url = QUrl("https://github.com/nogula/FigureForge")
-        QDesktopServices.openUrl(url)
+        dialog = QDialog()
+        dialog.setWindowTitle("About FigureForge")
+        dialog.setWindowIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/logo.png"))
+        )
+        layout = QGridLayout()
+
+        logo = QLabel()
+        logo.setPixmap(
+            QPixmap(os.path.join(CURRENT_DIR, "resources/assets/logo_color_text.png"))
+        )
+        # scale logo to 1" by 1"
+        logo.setScaledContents(True)
+        logo.setFixedSize(QSize(100, 100))
+
+        layout.addWidget(logo, 0, 0)
+
+        text_layout = QVBoxLayout()
+        text_widget = QWidget()
+        text_widget.setLayout(text_layout)
+        text_layout.setContentsMargins(0, 0, 0, 0)
+        text_layout.setSpacing(0)
+
+        label1 = QLabel(
+            "FigureForge is a GUI tool for creating and editing matplotlib figures."
+        )
+        label2 = QLabel(
+            'Visit the <a href="https://github.com/nogula/FigureForge">project homepage</a> for more information.'
+        )
+        label3 = QLabel(f"Version {__version__}")
+        label4 = QLabel("Copyright 2024 Noah Gula")
+        text_layout.addWidget(label1)
+        text_layout.addWidget(label2)
+
+        # Add a spacer between the second label and the third label
+        text_layout.addSpacing(10)
+
+        text_layout.addWidget(label3)
+        text_layout.addWidget(label4)
+        layout.addWidget(text_widget, 0, 1, Qt.AlignTop)
+
+        dialog.setLayout(layout)
+        dialog.exec()
+
+    # def about_pressed(self):
+
+    # """Open the GitHub page for this project."""
+    # url = QUrl("https://github.com/nogula/FigureForge")
+    # QDesktopServices.openUrl(url)
 
     def help_pressed(self):
         """Goes to the Wiki on the GitHub page."""
@@ -308,7 +376,7 @@ class MainWindow(QMainWindow):
 
     def load_plugins(self):
 
-        plugin_dir = os.path.join(CURRENT_DIR,"plugins")
+        plugin_dir = os.path.join(CURRENT_DIR, "plugins")
         if not os.path.exists(plugin_dir):
             return
 
