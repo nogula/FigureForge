@@ -1,6 +1,5 @@
 from copy import deepcopy
-import select
-import numpy as np
+import os
 
 from PySide6.QtWidgets import (
     QGraphicsSceneMouseEvent,
@@ -51,6 +50,7 @@ import matplotlib.colors as mcolors
 import matplotlib.text as mtext
 from matplotlib.gridspec import GridSpec
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class FigureManager(QWidget):
     def __init__(self):
@@ -76,7 +76,7 @@ class FigureManager(QWidget):
 
         self.selected_item = None
 
-        with open("FigureForge/structure.json", "r") as file:
+        with open(os.path.join(CURRENT_DIR,"structure.json")) as file:
             self.structure = json.load(file)
 
     def load_figure(self, file_name):
