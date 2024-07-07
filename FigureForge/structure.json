@@ -1,0 +1,361 @@
+{
+  "Figure": {
+    "attributes": {
+      "Label": {
+        "type": "string",
+        "get": "get_label",
+        "set": "set_label"
+      },
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Layout Engine": {
+        "type": "choice",
+        "get": "get_layout_engine",
+        "set": "set_layout_engine",
+        "value_options": ["constrained", "compressed", "tight", "none"]
+      },
+
+      "Title": {
+        "type": "string",
+        "get": "get_suptitle",
+        "set": "suptitle"
+      },
+
+      "Face Color": {
+        "type": "color",
+        "get": "get_facecolor",
+        "set": "set_facecolor"
+      }
+    }
+  },
+  "Axes": {
+    "attributes": {
+      "Label": {
+        "type": "string",
+        "get": "get_label",
+        "set": "set_label"
+      },
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Aspect Ratio": {
+        "type": "float",
+        "get": "get_aspect",
+        "set": "set_aspect"
+      },
+      "X Label": {
+        "type": "string",
+        "get": "get_xlabel",
+        "set": "set_xlabel"
+      },
+      "Y Label": {
+        "type": "string",
+        "get": "get_ylabel",
+        "set": "set_ylabel"
+      },
+      "Left Bound": {
+        "type": "float",
+        "get": "get_xbound",
+        "get_index": 0,
+        "set": "set_xbound",
+        "set_parameter": "lower"
+      },
+      "Right Bound": {
+        "type": "float",
+        "get": "get_xbound",
+        "get_index": 1,
+        "set": "set_xbound",
+        "set_parameter": "upper"
+      },
+      "Lower Bound": {
+        "type": "float",
+        "get": "get_ybound",
+        "get_index": 0,
+        "set": "set_ybound",
+        "set_parameter": "lower"
+      },
+      "Upper Bound": {
+        "type": "float",
+        "get": "get_ybound",
+        "get_index": 1,
+        "set": "set_ybound",
+        "set_parameter": "upper"
+      },
+      "X Scale": {
+        "type": "choice",
+        "get": "get_xscale",
+        "set": "set_xscale",
+        "value_options": ["linear", "log", "symlog", "logit"]
+      },
+      "Y Scale": {
+        "type": "choice",
+        "get": "get_yscale",
+        "set": "set_yscale",
+        "value_options": ["linear", "log", "symlog", "logit"]
+      }
+    }
+  },
+  "Rectangle": {
+    "attributes": {
+      "Label": {
+        "type": "string",
+        "get": "get_label",
+        "set": "set_label"
+      },
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Face Color": {
+        "type": "color",
+        "get": "get_facecolor",
+        "set": "set_facecolor"
+      },
+      "Edge Color": {
+        "type": "color",
+        "get": "get_edgecolor",
+        "set": "set_edgecolor"
+      },
+      "Line Width": {
+        "type": "float",
+        "get": "get_linewidth",
+        "set": "set_linewidth"
+      },
+      "Line Style": {
+        "type": "choice",
+        "get": "get_linestyle",
+        "set": "set_linestyle",
+        "value_options": ["solid", "dashed", "dashdot", "dotted"]
+      }
+    }
+  },
+  "Spine": {
+    "attributes": {
+      "Label": {
+        "type": "string",
+        "get": "get_label",
+        "set": "set_label"
+      },
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Line Width": {
+        "type": "float",
+        "get": "get_linewidth",
+        "set": "set_linewidth"
+      },
+      "Line Style": {
+        "type": "choice",
+        "get": "get_linestyle",
+        "set": "set_linestyle",
+        "value_options": ["solid", "dashed", "dashdot", "dotted"]
+      },
+      "Color": {
+        "type": "color",
+        "get": "get_edgecolor",
+        "set": "set_edgecolor"
+      },
+      "Lower Bound": {
+        "type": "float",
+        "get": "get_bounds",
+        "get_index": 0,
+        "set": "set_bounds",
+        "set_parameter": "low"
+      },
+      "Upper Bound": {
+        "type": "float",
+        "get": "get_bounds",
+        "get_index": 1,
+        "set": "set_bounds",
+        "set_parameter": "high"
+      }
+    }
+  },
+  "Text": {
+    "attributes": {
+      "Label": {
+        "type": "string",
+        "get": "get_label",
+        "set": "set_label"
+      },
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Text": {
+        "type": "string",
+        "get": "get_text",
+        "set": "set_text"
+      },
+      "Font Size": {
+        "type": "float",
+        "get": "get_fontsize",
+        "set": "set_fontsize"
+      },
+      "Font Family": {
+        "type": "choice",
+        "get": "get_fontfamily",
+        "set": "set_fontfamily",
+        "value_options": [
+          "serif",
+          "sans-serif",
+          "monospace",
+          "cursive",
+          "fantasy"
+        ]
+      },
+      "Font Style": {
+        "type": "choice",
+        "get": "get_fontstyle",
+        "set": "set_fontstyle",
+        "value_options": ["normal", "italic", "oblique"]
+      },
+      "Font Weight": {
+        "type": "choice",
+        "get": "get_fontweight",
+        "set": "set_fontweight",
+        "value_options": [
+          "ultralight",
+          "light",
+          "normal",
+          "regular",
+          "book",
+          "medium",
+          "roman",
+          "semibold",
+          "demibold",
+          "demi",
+          "bold",
+          "heavy",
+          "extra bold",
+          "black"
+        ]
+      },
+      "Color": {
+        "type": "color",
+        "get": "get_color",
+        "set": "set_color"
+      }
+    }
+  },
+  "PathCollection": {
+    "attributes": {
+      "Label": {
+        "type": "string",
+        "get": "get_label",
+        "set": "set_label"
+      },
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Face Color": {
+        "type": "color",
+        "get": "get_facecolor",
+        "set": "set_facecolor"
+      },
+      "Edge Color": {
+        "type": "color",
+        "get": "get_edgecolor",
+        "set": "set_edgecolor"
+      },
+      "Line Width": {
+        "type": "float",
+        "get": "get_linewidth",
+        "set": "set_linewidth"
+      }
+    }
+  },
+  "Line2D": {
+    "attributes": {
+      "Label": {
+        "type": "string",
+        "get": "get_label",
+        "set": "set_label"
+      },
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Line Width": {
+        "type": "float",
+        "get": "get_linewidth",
+        "set": "set_linewidth"
+      },
+      "Line Style": {
+        "type": "choice",
+        "get": "get_linestyle",
+        "set": "set_linestyle",
+        "value_options": ["solid", "dashed", "dashdot", "dotted",""]
+      },
+      "Line Color" : {
+        "type": "color",
+        "get": "get_color",
+        "set": "set_color"
+      },
+      "Marker": {
+        "type": "choice",
+        "get": "get_marker",
+        "set": "set_marker",
+        "value_options": [
+          "o",
+          "v",
+          "^",
+          "<",
+          ">",
+          "1",
+          "2",
+          "3",
+          "4",
+          "8",
+          "s",
+          "p",
+          "P",
+          "*",
+          "h",
+          "H",
+          "+",
+          "x",
+          "X",
+          "D",
+          "d",
+          "|",
+          "_",
+          ""
+        ]
+      },
+      "Marker Size": {
+        "type": "float",
+        "get": "get_markersize",
+        "set": "set_markersize"
+      },
+      "Marker Edge Width": {
+        "type": "float",
+        "get": "get_markeredgewidth",
+        "set": "set_markeredgewidth"
+      },
+      "Marker Edge Color": {
+        "type": "color",
+        "get": "get_markeredgecolor",
+        "set": "set_markeredgecolor"
+      },
+      "Marker Face Color": {
+        "type": "color",
+        "get": "get_markerfacecolor",
+        "set": "set_markerfacecolor"
+      }
+    }
+  }
+}
+
