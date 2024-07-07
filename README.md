@@ -1,4 +1,5 @@
-# FigureForge
+![](FigureForge\resources\assets\logo_color_text.png)
+
 A Python GUI application for interactive creation and editing of matplotlib figures.
 
 ## Installation
