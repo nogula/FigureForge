@@ -33,6 +33,7 @@ class PropertyInspector(QWidget):
         self.scroll_area.setWidgetResizable(True)
 
         self.content_widget = QWidget()
+        self.scroll_area.setStyleSheet("background-color: #ffffff")
         self.scroll_area.setWidget(self.content_widget)
 
         self.content_layout = QGridLayout(self.content_widget)

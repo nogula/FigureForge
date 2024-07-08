@@ -223,7 +223,6 @@ class MainWindow(QMainWindow):
         splitter.addWidget(figure_widget)
 
         main_widget = QWidget()
-        # main_widget.setStyleSheet("border: 2px solid red;")
         main_layout = QVBoxLayout(main_widget)
         main_layout.addWidget(splitter)
         self.setCentralWidget(main_widget)
