@@ -12,7 +12,6 @@ class SetSpineBounds:
     icon = os.path.join(os.path.dirname(__file__), "set_spine_bounds.png")
 
     def run(self, ax):
-        print(ax)
         if not isinstance(ax, Axes):
             msg_failure = QMessageBox()
             msg_failure.setText(f"Invalid item type: {type(ax)}.")
@@ -56,5 +55,3 @@ class SetSpineBounds:
                 ax.spines[spine].set_bounds(min_y, max_y)
             elif spine == "bottom":
                 ax.spines[spine].set_bounds(min_x, max_x)
-
-        print(min_x, max_x, min_y, max_y)
