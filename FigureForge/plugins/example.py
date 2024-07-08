@@ -1,4 +1,5 @@
-from tkinter.tix import Select
+import os
+
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 from matplotlib.spines import Spine
@@ -11,7 +12,7 @@ from .utils.select_spines_dialog import SelectSpinesDialog
 class ExamplePlugin:
     name = "Remove Spines"
     tooltip = "Remove spines from the selected item."
-    icon = "FigureForge/plugins/remove_spines.png"
+    icon = os.path.join(os.path.dirname(__file__),"remove_spines.png")
 
     def run(self, item):
         msg_success = QMessageBox()
