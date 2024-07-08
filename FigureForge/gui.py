@@ -1,3 +1,7 @@
+import os
+import importlib
+import inspect
+
 from PySide6.QtWidgets import (
     QWidget,
     QSplitter,
@@ -11,17 +15,11 @@ from PySide6.QtWidgets import (
     QDialog,
     QGridLayout,
 )
-from PySide6.QtCore import Qt, QUrl, QObject, QSize
-from PySide6.QtGui import QFont, QDesktopServices, QIcon, QAction, QCursor, QPixmap
+from PySide6.QtCore import Qt, QUrl, QSize
+from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 
-import matplotlib.pyplot as plt
-import pandas as pd
-
-from .utils import FigureExplorer, FigureManager, PropertyInspector
-from .__init__ import __version__
-import os
-import importlib
-import inspect
+from .__init__ import __version__, CURRENT_DIR
+from .figure_manager import FigureManager
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
