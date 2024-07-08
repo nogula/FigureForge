@@ -115,11 +115,18 @@ class MainWindow(QMainWindow):
 
         self.plugin_menu = menubar.addMenu("Plugins")
         self.plugin_menu.setToolTipsVisible(True)
+
         self.load_plugins()
         self.plugin_menu.addSeparator()
         open_plugins_folder_action = QAction("Open Plugins Folder...", self)
         open_plugins_folder_action.triggered.connect(self.open_plugins_folder)
         self.plugin_menu.addAction(open_plugins_folder_action)
+        reload_plugins_action = QAction("Reload Plugins", self)
+        reload_plugins_action.triggered.connect(self.reload_plugins)
+        reload_plugins_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/refresh_icon.png"))
+        )
+        self.plugin_menu.addAction(reload_plugins_action)
         plugins_documentation_action = QAction("Plugins Documentation", self)
         plugins_documentation_action.triggered.connect(self.plugins_documentation)
         self.plugin_menu.addAction(plugins_documentation_action)
@@ -363,7 +370,7 @@ class MainWindow(QMainWindow):
         url = QUrl("https://github.com/nogula/FigureForge/issues/new")
         QDesktopServices.openUrl(url)
 
-    def load_plugins(self):
+    def load_plugins(self, reload=False):
 
         plugin_dir = os.path.join(CURRENT_DIR, "plugins")
         if not os.path.exists(plugin_dir):
@@ -377,6 +384,8 @@ class MainWindow(QMainWindow):
                     module = importlib.import_module(
                         f"FigureForge.plugins.{module_name}"
                     )
+                    if reload:
+                        module = importlib.reload(module)
                     classes = [
                         cls
                         for cls in inspect.getmembers(module, inspect.isclass)
@@ -388,15 +397,22 @@ class MainWindow(QMainWindow):
                             action = QAction(cls.name, self)
                             if hasattr(cls, "tooltip"):
                                 action.setToolTip(cls.tooltip)
-                                print(cls.tooltip)
                             if hasattr(cls, "icon"):
                                 action.setIcon(QIcon(cls.icon))
                             action.triggered.connect(
                                 lambda checked, obj=cls: self.run_plugin(obj)
                             )
-                            self.plugin_menu.addAction(action)
+                            if reload:
+                                self.plugin_menu.insertAction(
+                                    self.plugin_menu.actions()[len(self.plugin_menu.actions())-3], action
+                                )
+                            else:
+                                self.plugin_menu.addAction(action)
                 except Exception as e:
                     print(f"Failed to load plugin {module_name}: {e}")
+        
+        if reload:
+            self.plugin_menu.insertSeparator(self.plugin_menu.actions()[len(self.plugin_menu.actions())-3])
 
     def run_plugin(self, plugin_class):
         selected_item = self.fm.selected_item
@@ -411,8 +427,18 @@ class MainWindow(QMainWindow):
         self.fm.delete_item()
 
     def configure_gridspec(self):
-        self.fm.configure_gridspec()
+        raise NotImplementedError
 
     def refresh_display(self):
         self.fm.canvas.draw()
         self.fm.fe.build_tree(self.fm.figure)
+
+    def reload_plugins(self):
+        actions = self.plugin_menu.actions()
+        total_actions = len(actions)
+        actions_to_remove = actions[: total_actions - 3]
+
+        for action in actions_to_remove:
+            self.plugin_menu.removeAction(action)
+
+        self.load_plugins(reload=True)
