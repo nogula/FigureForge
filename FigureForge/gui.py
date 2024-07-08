@@ -204,7 +204,6 @@ class MainWindow(QMainWindow):
         fe_widget.setLayout(fe_layout)
         left_splitter.addWidget(fe_widget)
 
-        # left_splitter.addWidget(self.fe)
         pi_layout = QVBoxLayout()
         pi_layout.setContentsMargins(0, 5, 5, 0)
         pi_header_widget = QLabel("Property Inspector")
@@ -323,7 +322,6 @@ class MainWindow(QMainWindow):
         logo.setPixmap(
             QPixmap(os.path.join(CURRENT_DIR, "resources/assets/logo_color_text.png"))
         )
-        # scale logo to 1" by 1"
         logo.setScaledContents(True)
         logo.setFixedSize(QSize(100, 100))
 
@@ -346,7 +344,6 @@ class MainWindow(QMainWindow):
         text_layout.addWidget(label1)
         text_layout.addWidget(label2)
 
-        # Add a spacer between the second label and the third label
         text_layout.addSpacing(10)
 
         text_layout.addWidget(label3)
@@ -355,12 +352,6 @@ class MainWindow(QMainWindow):
 
         dialog.setLayout(layout)
         dialog.exec()
-
-    # def about_pressed(self):
-
-    # """Open the GitHub page for this project."""
-    # url = QUrl("https://github.com/nogula/FigureForge")
-    # QDesktopServices.openUrl(url)
 
     def help_pressed(self):
         """Goes to the Wiki on the GitHub page."""

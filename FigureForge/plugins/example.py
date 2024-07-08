@@ -12,7 +12,7 @@ from .utils.select_spines_dialog import SelectSpinesDialog
 class ExamplePlugin:
     name = "Remove Spines"
     tooltip = "Remove spines from the selected item."
-    icon = os.path.join(os.path.dirname(__file__),"remove_spines.png")
+    icon = os.path.join(os.path.dirname(__file__), "remove_spines.png")
 
     def run(self, item):
         msg_success = QMessageBox()
