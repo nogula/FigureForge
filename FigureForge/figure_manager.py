@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+import numpy as np
 
 from .__init__ import CURRENT_DIR
 from .property_inspector import PropertyInspector
@@ -28,9 +29,7 @@ class FigureManager(QWidget):
         self.file_name = None
 
         self.new_figure()
-        self.figure.subplots()
-        self.figure.axes[0].plot([1, 2, 3, 4], [1, 4, 9, 16])
-        self.convert_to_gridspec(self.figure)
+        self.figure.__dict__.update(create_default_figure().__dict__)
         self.canvas.draw()
         self.fe.build_tree(self.figure)
 
@@ -47,7 +46,6 @@ class FigureManager(QWidget):
         with open(file_name, "rb") as file:
             data = pickle.load(file)
         self.figure.__dict__.update(data.__dict__)
-        self.convert_to_gridspec(self.figure)
         self.canvas.draw()
 
         self.unsaved_changes = False
@@ -124,3 +122,67 @@ class FigureManager(QWidget):
 
     def convert_to_gridspec(self, figure):
         pass
+
+
+def create_default_figure():
+
+    x = np.linspace(0, 10, 100)
+    y = np.sin(x)
+
+    np.random.seed(0)
+    x_scatter = np.random.rand(100)
+    y_scatter = np.random.rand(100)
+    colors = np.random.rand(100)
+    sizes = 1000 * np.random.rand(100)
+
+    categories = ['A', 'B', 'C', 'D']
+    values = np.random.rand(len(categories))
+
+    data = np.random.randn(100, 4)
+
+    # Create the figure
+    fig = Figure()
+    axs = fig.subplots(2, 2)
+    fig.suptitle('FigureForge Demo Figure', fontsize=16, label='suptitle')
+
+    # Line plot
+    axs[0, 0].plot(x, y, marker='o', linestyle='-', color='b', label='sin(x)')
+    axs[0, 0].set_label('Line Plot')
+    axs[0, 0].set_title('Line Plot')
+    axs[0, 0].legend()
+    axs[0, 0].set_xscale('symlog')
+    axs[0, 0].set_xlabel('x')
+    axs[0, 0].set_ylabel('sin(x)')
+
+    for spine in axs[0, 0].spines:
+        if spine == 'top' or spine == 'right':
+            axs[0, 0].spines[spine].set_visible(False)
+        if spine == 'bottom':
+            axs[0, 0].spines[spine].set_bounds(min(x), max(x))
+        if spine == 'left':
+            axs[0, 0].spines[spine].set_bounds(min(y), max(y))
+        
+
+    # Scatter plot
+    scatter = axs[0, 1].scatter(x_scatter, y_scatter, c=colors, s=sizes, alpha=0.3, cmap='viridis')
+    axs[0, 1].set_label('Scatter Plot')
+    axs[0, 1].set_title('Scatter Plot')
+    axs[0, 1].annotate('Example Annotation', xy=(0.5, 0.5), xytext=(0.7, 0.7),
+                    arrowprops=dict(facecolor='black', shrink=0.05))
+    fig.colorbar(scatter, ax=axs[0, 1])
+
+    # Bar chart
+    axs[1, 0].bar(categories, values, color=['lightgray', 'darkgray', 'lightgray', 'lightgray'])
+    axs[1, 0].set_label('Bar Chart')
+    axs[1, 0].set_title('Bar Chart')
+    axs[1, 0].grid(True, axis='y',color='white')
+
+    for spine in axs[1, 0].spines:
+        axs[1, 0].spines[spine].set_visible(False)
+
+    # Box plot
+    axs[1, 1].boxplot(data)
+    axs[1, 1].set_label('Box Plot')
+    axs[1, 1].set_title('Box Plot')
+
+    return fig
