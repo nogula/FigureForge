@@ -114,6 +114,7 @@ class MainWindow(QMainWindow):
         edit_menu.addAction(delete_item_action)
 
         self.plugin_menu = menubar.addMenu("Plugins")
+        self.plugin_menu.setToolTipsVisible(True)
         self.load_plugins()
         self.plugin_menu.addSeparator()
         open_plugins_folder_action = QAction("Open Plugins Folder...", self)
@@ -396,6 +397,7 @@ class MainWindow(QMainWindow):
                             action = QAction(cls.name, self)
                             if hasattr(cls, "tooltip"):
                                 action.setToolTip(cls.tooltip)
+                                print(cls.tooltip)
                             if hasattr(cls, "icon"):
                                 action.setIcon(QIcon(cls.icon))
                             action.triggered.connect(
