@@ -20,6 +20,8 @@ from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 
 from .__init__ import __version__, CURRENT_DIR
 from .figure_manager import FigureManager
+from .bug_report_dialog import BugReportDialog
+
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -112,6 +114,11 @@ class MainWindow(QMainWindow):
         )
         delete_item_action.setShortcut("Del")
         edit_menu.addAction(delete_item_action)
+
+        reload_structure_action = QAction("Reload Structure", self)
+        reload_structure_action.triggered.connect(self.reload_json_structure)
+        reload_structure_action.setShortcut("Ctrl+R")
+        edit_menu.addAction(reload_structure_action)
 
         self.plugin_menu = menubar.addMenu("Plugins")
         self.plugin_menu.setToolTipsVisible(True)
@@ -366,9 +373,12 @@ class MainWindow(QMainWindow):
         QDesktopServices.openUrl(url)
 
     def bug_pressed(self):
-        """Open the issues page for the GitHub project."""
-        url = QUrl("https://github.com/nogula/FigureForge/issues/new")
-        QDesktopServices.openUrl(url)
+        dialog = BugReportDialog(self)
+        dialog.exec()
+
+        # """Open the issues page for the GitHub project."""
+        # url = QUrl("https://github.com/nogula/FigureForge/issues/new")
+        # QDesktopServices.openUrl(url)
 
     def load_plugins(self, reload=False):
 
@@ -404,15 +414,20 @@ class MainWindow(QMainWindow):
                             )
                             if reload:
                                 self.plugin_menu.insertAction(
-                                    self.plugin_menu.actions()[len(self.plugin_menu.actions())-3], action
+                                    self.plugin_menu.actions()[
+                                        len(self.plugin_menu.actions()) - 3
+                                    ],
+                                    action,
                                 )
                             else:
                                 self.plugin_menu.addAction(action)
                 except Exception as e:
                     print(f"Failed to load plugin {module_name}: {e}")
-        
+
         if reload:
-            self.plugin_menu.insertSeparator(self.plugin_menu.actions()[len(self.plugin_menu.actions())-3])
+            self.plugin_menu.insertSeparator(
+                self.plugin_menu.actions()[len(self.plugin_menu.actions()) - 3]
+            )
 
     def run_plugin(self, plugin_class):
         selected_item = self.fm.selected_item
@@ -442,3 +457,7 @@ class MainWindow(QMainWindow):
             self.plugin_menu.removeAction(action)
 
         self.load_plugins(reload=True)
+
+    def reload_json_structure(self):
+        self.fm.load_json_structure()
+        print("Reloaded JSON structure.")

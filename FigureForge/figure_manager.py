@@ -38,6 +38,9 @@ class FigureManager(QWidget):
 
         self.selected_item = None
 
+        self.load_json_structure()
+
+    def load_json_structure(self):
         with open(os.path.join(CURRENT_DIR, "structure.json")) as file:
             self.structure = json.load(file)
 
