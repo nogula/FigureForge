@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QDialog,
     QGridLayout,
+    QMenu,
 )
 from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
@@ -382,6 +383,16 @@ class MainWindow(QMainWindow):
 
     def load_plugins(self, reload=False):
 
+        # remove all but the last 3 actions (reload, open plugins folder, reload plugins)
+        if reload:
+            actions = self.plugin_menu.actions()
+            total_actions = len(actions)
+            actions_to_remove = actions[: total_actions - 3]
+
+            for action in actions_to_remove:
+                self.plugin_menu.removeAction(action)
+        
+
         plugin_dir = os.path.join(CURRENT_DIR, "plugins")
         if not os.path.exists(plugin_dir):
             return
@@ -413,14 +424,45 @@ class MainWindow(QMainWindow):
                                 lambda checked, obj=cls: self.run_plugin(obj)
                             )
                             if reload:
-                                self.plugin_menu.insertAction(
-                                    self.plugin_menu.actions()[
-                                        len(self.plugin_menu.actions()) - 3
-                                    ],
-                                    action,
-                                )
+                                if hasattr(cls, "submenu"):
+                                    submenu_exists = False
+                                    for submenu in self.plugin_menu.actions():
+                                        if submenu.text() == cls.submenu:
+                                            submenu_exists = True
+                                            break
+                                    if not submenu_exists:
+                                        submenu = self.plugin_menu.insertMenu(
+                                            self.plugin_menu.actions()[
+                                                len(self.plugin_menu.actions()) - 3
+                                            ],
+                                            QMenu(cls.submenu),
+                                        )
+                                        # submenu.setToolTipsVisible(True)
+                                        submenu.menu().addAction(action)
+                                    else:
+                                        submenu.menu().addAction(action)
+                                else:
+                                    self.plugin_menu.insertAction(
+                                        self.plugin_menu.actions()[
+                                            len(self.plugin_menu.actions()) - 3
+                                        ],
+                                        action,
+                                    )
                             else:
-                                self.plugin_menu.addAction(action)
+                                if hasattr(cls, "submenu"):
+                                    submenu_exists = False
+                                    for submenu in self.plugin_menu.actions():
+                                        if submenu.text() == cls.submenu:
+                                            submenu_exists = True
+                                            break
+                                    if not submenu_exists:
+                                        submenu = self.plugin_menu.addMenu(cls.submenu)
+                                        submenu.setToolTipsVisible(True)
+                                        submenu.addAction(action)
+                                    else:
+                                        submenu.menu().addAction(action)
+                                else:
+                                    self.plugin_menu.addAction(action)
                 except Exception as e:
                     print(f"Failed to load plugin {module_name}: {e}")
 

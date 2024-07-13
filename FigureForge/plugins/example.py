@@ -13,6 +13,7 @@ class ExamplePlugin:
     name = "Remove Spines"
     tooltip = "Remove spines from the selected item."
     icon = os.path.join(os.path.dirname(__file__), "remove_spines.png")
+    submenu = "Spines"
 
     def run(self, item):
         msg_success = QMessageBox()

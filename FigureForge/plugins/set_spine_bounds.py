@@ -10,6 +10,7 @@ class SetSpineBounds:
     name = "Set Spine Bounds"
     tooltip = "Set the bounds of the selected spine(s) to max and min of data."
     icon = os.path.join(os.path.dirname(__file__), "set_spine_bounds.png")
+    submenu = "Spines"
 
     def run(self, ax):
         if not isinstance(ax, Axes):
