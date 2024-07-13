@@ -191,6 +191,11 @@
         "get": "get_visible",
         "set": "set_visible"
       },
+      "Use TeX": {
+        "type": "bool",
+        "get": "get_usetex",
+        "set": "set_usetex"
+      },
       "Text": {
         "type": "string",
         "get": "get_text",
@@ -201,17 +206,10 @@
         "get": "get_fontsize",
         "set": "set_fontsize"
       },
-      "Font Family": {
-        "type": "choice",
-        "get": "get_fontfamily",
-        "set": "set_fontfamily",
-        "value_options": [
-          "serif",
-          "sans-serif",
-          "monospace",
-          "cursive",
-          "fantasy"
-        ]
+      "Font Name": {
+        "type": "string",
+        "get": "get_fontname",
+        "set": "set_fontname"
       },
       "Font Style": {
         "type": "choice",
@@ -240,22 +238,35 @@
           "black"
         ]
       },
+      "Font Stretch": {
+        "type": "choice",
+        "get": "get_stretch",
+        "set": "set_fontstretch",
+        "value_options": ["ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded"]
+      },
       "Color": {
         "type": "color",
         "get": "get_color",
         "set": "set_color"
       },
-      "X Position": {
-        "type": "float",
+      "Position": {
+        "type": "tuple",
+        "columns": 2,
+        "types": ["float", "float"],
         "get": "get_position",
-        "get_index": 0,
-        "set": "set_x"
+        "set": "set_position"
       },
-      "Y Position": {
-        "type": "float",
-        "get": "get_position",
-        "get_index": 1,
-        "set": "set_y"
+      "Horizontal Alignment": {
+        "type": "choice",
+        "get": "get_horizontalalignment",
+        "set": "set_horizontalalignment",
+        "value_options": ["center", "right", "left"]
+      },
+      "Vertical Alignment": {
+        "type": "choice",
+        "get": "get_verticalalignment",
+        "set": "set_verticalalignment",
+        "value_options": ["baseline","bottom","center","center_baseline","top"]
       }
     }
   },
@@ -366,6 +377,125 @@
         "type": "color",
         "get": "get_markerfacecolor",
         "set": "set_markerfacecolor"
+      }
+    }
+  },
+  "Annotation": {
+    "attributes": {
+      "Label": {
+        "type": "string",
+        "get": "get_label",
+        "set": "set_label"
+      },
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Text": {
+        "type": "string",
+        "get": "get_text",
+        "set": "set_text"
+      },
+      "Font Size": {
+        "type": "float",
+        "get": "get_fontsize",
+        "set": "set_fontsize"
+      },
+      "Font Name": {
+        "type": "string",
+        "get": "get_fontname",
+        "set": "set_fontname"
+      },
+      "Font Style": {
+        "type": "choice",
+        "get": "get_fontstyle",
+        "set": "set_fontstyle",
+        "value_options": ["normal", "italic", "oblique"]
+      },
+      "Font Weight": {
+        "type": "choice",
+        "get": "get_fontweight",
+        "set": "set_fontweight",
+        "value_options": [
+          "ultralight",
+          "light",
+          "normal",
+          "regular",
+          "book",
+          "medium",
+          "roman",
+          "semibold",
+          "demibold",
+          "demi",
+          "bold",
+          "heavy",
+          "extra bold",
+          "black"
+        ]
+      },
+      "Font Stretch": {
+        "type": "choice",
+        "get": "get_stretch",
+        "set": "set_fontstretch",
+        "value_options": ["ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded"]
+      },
+      "Color": {
+        "type": "color",
+        "get": "get_color",
+        "set": "set_color"
+      },
+      "X Position": {
+        "type": "float",
+        "get": "get_position",
+        "get_index": 0,
+        "set": "set_x"
+      },
+      "Y Position": {
+        "type": "float",
+        "get": "get_position",
+        "get_index": 1,
+        "set": "set_y"
+      },
+      "Horizontal Alignment": {
+        "type": "choice",
+        "get": "get_horizontalalignment",
+        "set": "set_horizontalalignment",
+        "value_options": ["center", "right", "left"]
+      },
+      "Vertical Alignment": {
+        "type": "choice",
+        "get": "get_verticalalignment",
+        "set": "set_verticalalignment",
+        "value_options": ["baseline","bottom","center","center_baseline","top"]
+      },
+      "Text Position": {
+        "type": "tuple",
+        "columns": 2,
+        "types": ["float", "float"],
+        "property": true,
+        "get": "xyann",
+        "set": "xyann"
+      },
+      "Text Coords": {
+        "type": "choice",
+        "get": "get_anncoords",
+        "set": "set_anncoords",
+        "value_options": ["data", "axes points", "axes pixels", "axes fraction", "figure points", "figure pixels", "figure fraction", "subfigure points", "subfigure pixels", "subfigure fraction", "polar", "offset points", "offset pixels", "offset fontsize"]
+      },
+      "Annotation Position": {
+        "type": "tuple",
+        "columns": 2,
+        "types": ["float", "float"],
+        "property": true,
+        "get": "xy",
+        "set": "xy"
+      },
+      "Annotation Coords": {
+        "type": "choice",
+        "get": "get_anncoords",
+        "set": "set_anncoords",
+        "value_options": ["data", "axes points", "axes pixels", "axes fraction", "figure points", "figure pixels", "figure fraction", "subfigure points", "subfigure pixels", "subfigure fraction", "polar"]
       }
     }
   }

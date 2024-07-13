@@ -1,3 +1,4 @@
+from ast import Tuple
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -15,6 +16,8 @@ from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt
 
 from .color_button import ColorButton
+from .tuple_property import TupleProperty
+from .dict_property import DictProperty
 import matplotlib.colors as mcolors
 
 
@@ -33,7 +36,7 @@ class PropertyInspector(QWidget):
         self.scroll_area.setWidgetResizable(True)
 
         self.content_widget = QWidget()
-        self.scroll_area.setStyleSheet("background-color: #ffffff")
+        # self.scroll_area.setStyleSheet("background-color: #ffffff")
         self.scroll_area.setWidget(self.content_widget)
 
         self.content_layout = QGridLayout(self.content_widget)
@@ -64,10 +67,10 @@ class PropertyInspector(QWidget):
             if item.widget():
                 item.widget().deleteLater()
 
-    def add_property(self, name, value_type, value, value_options=None):
+    def add_property(self, name, value_type, value, value_options=None, columns=None, types=None, values=None):
         row = self.content_layout.rowCount()
-        self.content_layout.addWidget(QLabel(name), row, 0)
-        self.content_layout.addWidget(QLabel(value_type), row, 1)
+        self.content_layout.addWidget(QLabel(name), row, 0, Qt.AlignTop)
+        self.content_layout.addWidget(QLabel(value_type), row, 1, Qt.AlignTop)
 
         if value_type == "bool":
             value_widget = QCheckBox()
@@ -127,6 +130,18 @@ class PropertyInspector(QWidget):
                 lambda n=name, w=value_widget: self.on_value_changed(n, w)
             )
             self.content_layout.addWidget(value_widget, row, 2)
+        elif value_type == "tuple":
+            value_widget = TupleProperty(columns=columns, types=types, values=value)
+            value_widget.valueChanged.connect(
+                lambda n=name, w=value_widget: self.on_value_changed(n, w)
+            )
+            self.content_layout.addWidget(value_widget, row, 2)
+        elif value_type == "dict":
+            value_widget = DictProperty(types=types, values=value)
+            value_widget.valueChanged.connect(
+                lambda n=name, w=value_widget: self.on_value_changed(n, w)
+            )
+            self.content_layout.addWidget(value_widget, row, 2)
 
     def on_value_changed(self, name, widget):
         if widget.__class__.__name__ == "QCheckBox":
@@ -141,6 +156,10 @@ class PropertyInspector(QWidget):
             value = widget.color.getRgbF()
         elif widget.__class__.__name__ == "QSpinBox":
             value = widget.value()
+        elif widget.__class__.__name__ == "TupleProperty":
+            value = widget.get_values()
+        elif widget.__class__.__name__ == "DictProperty":
+            value = widget.get_values()
         else:
             value = None
 

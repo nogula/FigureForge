@@ -79,7 +79,16 @@ class FigureManager(QWidget):
                 if "value_options" in properties[name]
                 else None
             )
-            if "get_index" in properties[name]:
+            columns = properties[name]["columns"] if "columns" in properties[name] else None
+            types = properties[name]["types"] if "types" in properties[name] else None
+            if "property" in properties[name]:
+                value = getattr(self.selected_item, properties[name]["get"])
+                if "get_index" in properties[name]:
+                    try:
+                        value = value[properties[name]["get_index"]]
+                    except TypeError:
+                        value = value
+            elif "get_index" in properties[name]:
                 value = getattr(self.selected_item, properties[name]["get"])()
                 try:
                     value = value[properties[name]["get_index"]]
@@ -87,23 +96,31 @@ class FigureManager(QWidget):
                     value = value
             else:
                 value = getattr(self.selected_item, properties[name]["get"])()
-            self.pi.add_property(name, value_type, value, value_options)
+
+            if value_type == "tuple":
+                columns = properties[name]["columns"]
+                types = properties[name]["types"]
+            elif value_type == "dict":
+                types = properties[name]["types"]
+
+            self.pi.add_property(name, value_type, value, value_options, columns, types)
 
     def on_property_changed(self, property_name, value):
         item = self.selected_item
         item_class = item.__class__.__name__
         set_method = self.structure[item_class]["attributes"][property_name]["set"]
+        get_method = self.structure[item_class]["attributes"][property_name]["get"]
         if "set_parameter" in self.structure[item_class]["attributes"][property_name]:
             parameter = self.structure[item_class]["attributes"][property_name][
                 "set_parameter"
             ]
             value = {parameter: value}
             getattr(item, set_method)(**value)
+        elif "property" in self.structure[item_class]["attributes"][property_name]:
+            setattr(item, set_method, value)
         else:
             getattr(item, set_method)(value)
         self.canvas.draw()
-        self.unsaved_changes = True
-        # self.fe.build_tree(self.figure)
         self.unsaved_changes = True
 
     def delete_item(self):
@@ -175,8 +192,10 @@ def create_default_figure():
         "Example Annotation",
         xy=(0.5, 0.5),
         xytext=(0.7, 0.7),
-        arrowprops=dict(facecolor="black", shrink=0.05),
-    )
+        arrowprops=dict(
+            arrowstyle="->", connectionstyle="arc3,rad=0.5", facecolor="black", lw=0.5
+        ),
+    ).draggable()
     fig.colorbar(scatter, ax=axs[0, 1])
 
     # Bar chart
