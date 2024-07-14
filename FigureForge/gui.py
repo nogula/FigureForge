@@ -22,6 +22,7 @@ from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 from .__init__ import __version__, CURRENT_DIR
 from .figure_manager import FigureManager
 from .bug_report_dialog import BugReportDialog
+from .export_figure_dialog import ExportFigureDialog
 
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -307,12 +308,15 @@ class MainWindow(QMainWindow):
             self.fm.save_figure(self.fm.file_name)
 
     def export_figure(self):
-        options = QFileDialog.Options()
-        file_name, _ = QFileDialog.getSaveFileName(
-            self, "Export Figure", "", "PNG Files (*.png)", options=options
-        )
-        if file_name:
-            self.fm.figure.savefig(file_name)
+        # options = QFileDialog.Options()
+        # file_name, _ = QFileDialog.getSaveFileName(
+        #     self, "Export Figure", "", "PNG Files (*.png)", options=options
+        # )
+        # if file_name:
+        #     self.fm.figure.savefig(file_name)
+        dialog = ExportFigureDialog(self.fm.figure)
+        dialog.exec()
+        self.fm.canvas.draw()
 
     def quit(self):
         if self.fm.unsaved_changes:
