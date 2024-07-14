@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
 )
 
 from PySide6 import QtCore
+
 # from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -21,6 +22,7 @@ from .figure_explorer import FigureExplorer
 class FigureManager(QWidget):
     def __init__(self):
         super().__init__()
+        self.debug = False
 
         self.pi = PropertyInspector()
         self.fe = FigureExplorer()
@@ -40,16 +42,17 @@ class FigureManager(QWidget):
         # Connect signals to slots
         self.fe.itemSelected.connect(self.on_item_selected)
         self.pi.propertyChanged.connect(self.on_property_changed)
-        self.selected_item = None
+        self.selected_obj = None
 
         # Load the JSON figure property structure as a dict
         self.load_json_structure()
 
-        self.debug = False
-
     def load_json_structure(self):
-        with open(os.path.join(CURRENT_DIR, "structure.json")) as file:
+        json_file = os.path.join(CURRENT_DIR, "structure.json")
+        with open(json_file) as file:
             self.structure = json.load(file)
+        if self.debug:
+            print(f"Loaded structure: {json_file}")
 
     def load_figure(self, file_name):
         self.new_figure()
@@ -59,11 +62,15 @@ class FigureManager(QWidget):
         self.canvas.draw()
         self.unsaved_changes = False
         self.fe.build_tree(self.figure)
+        if self.debug:
+            print(f"Loaded figure from {file_name}")
 
     def save_figure(self, file_name):
         with open(file_name, "wb") as file:
             pickle.dump(self.figure, file)
         self.unsaved_changes = False
+        if self.debug:
+            print(f"Saved figure to {file_name}")
 
     def new_figure(self):
         self.figure.clear()
@@ -71,9 +78,11 @@ class FigureManager(QWidget):
         self.unsaved_changes = False
         self.canvas.draw()
         self.fe.build_tree(self.figure)
+        if self.debug:
+            print("Created new figure")
 
     def on_item_selected(self, obj):
-        self.selected_item = obj
+        self.selected_obj = obj
         self.pi.clear_properties()
         properties = self.structure[obj.__class__.__name__]["attributes"]
 
@@ -90,8 +99,11 @@ class FigureManager(QWidget):
 
             self.pi.add_property(property_name, value_type, value, value_options, types)
 
+        if self.debug:
+            print(f"Selected {obj.__class__.__name__}")
+
     def on_property_changed(self, property_name, value):
-        obj = self.selected_item
+        obj = self.selected_obj
         obj_class = obj.__class__.__name__
         prop = self.structure[obj_class]["attributes"][property_name]
         set_method = prop["set"]
@@ -104,20 +116,26 @@ class FigureManager(QWidget):
         self.canvas.draw()
         self.unsaved_changes = True
 
-    def delete_item(self):
-        if self.selected_item is None:
+        if self.debug:
+            print(f"Changed {property_name} to {value} on {obj_class}")
+
+    def delete_obj(self):
+        if self.selected_obj is None:
             return
 
-        self.attempt_delete(self.selected_item)
+        self.attempt_delete(self.selected_obj)
         self.canvas.draw()
         self.unsaved_changes = True
 
         self.fe.build_tree(self.figure)
-        self.selected_item = None
+        self.selected_obj = None
 
-    def attempt_delete(self, item):
+        if self.debug:
+            print(f"Attempting to delete {self.selected_obj}")
+
+    def attempt_delete(self, obj):
         try:
-            item.remove()
+            obj.remove()
         except NotImplementedError:
             QMessageBox.critical(self, "Error", "Cannot delete this item.")
 

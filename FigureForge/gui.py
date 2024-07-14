@@ -308,15 +308,11 @@ class MainWindow(QMainWindow):
             self.fm.save_figure(self.fm.file_name)
 
     def export_figure(self):
-        # options = QFileDialog.Options()
-        # file_name, _ = QFileDialog.getSaveFileName(
-        #     self, "Export Figure", "", "PNG Files (*.png)", options=options
-        # )
-        # if file_name:
-        #     self.fm.figure.savefig(file_name)
         dialog = ExportFigureDialog(self.fm.figure)
         dialog.exec()
         self.fm.canvas.draw()
+        if self.fm.debug:
+            print("Exported figure")
 
     def quit(self):
         if self.fm.unsaved_changes:
@@ -390,13 +386,7 @@ class MainWindow(QMainWindow):
         dialog = BugReportDialog(self)
         dialog.exec()
 
-        # """Open the issues page for the GitHub project."""
-        # url = QUrl("https://github.com/nogula/FigureForge/issues/new")
-        # QDesktopServices.openUrl(url)
-
     def load_plugins(self, reload=False):
-
-        # remove all but the last 3 actions (reload, open plugins folder, reload plugins)
         if reload:
             actions = self.plugin_menu.actions()
             total_actions = len(actions)

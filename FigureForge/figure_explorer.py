@@ -15,7 +15,6 @@ class FigureExplorer(QTreeWidget):
         self.init_ui()
 
     def init_ui(self):
-        # self.setHeaderItem(QTreeWidgetItem(["Figure Explorer"]))
         self.header().hide()
         pass
 
