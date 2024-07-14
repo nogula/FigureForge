@@ -14,8 +14,10 @@ from PySide6.QtCore import Signal
 from .tuple_property import TupleProperty
 from .color_button import ColorButton
 
+
 class DictProperty(QWidget):
     valueChanged = Signal(object)
+
     def __init__(self, types, values):
         super().__init__()
 
@@ -55,7 +57,7 @@ class DictProperty(QWidget):
             self.layout.addWidget(widget)
             self.widgets.append(widget)
         self.set_values(self.values)
-    
+
     def set_values(self, values):
         for i, k in enumerate(self.types):
             if self.types[k] == "bool":

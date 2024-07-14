@@ -10,8 +10,10 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Signal
 
+
 class TupleProperty(QWidget):
     valueChanged = Signal(object)
+
     def __init__(self, types, values):
         super().__init__()
 
@@ -48,9 +50,8 @@ class TupleProperty(QWidget):
 
             self.layout.addWidget(widget)
             self.widgets.append(widget)
-        
-        self.set_values(self.values)
 
+        self.set_values(self.values)
 
     def set_values(self, values):
         for i in range(self.columns):
