@@ -71,39 +71,22 @@ class FigureManager(QWidget):
         self.selected_item = item
         self.pi.clear_properties()
         properties = self.structure[item.__class__.__name__]["attributes"]
-        for property in properties:
-            name = property
-            value_type = properties[name]["type"]
+        for property_name in properties:
+            prop = properties[property_name]
+            value_type = prop["type"]
             value_options = (
-                properties[name]["value_options"]
-                if "value_options" in properties[name]
+                prop["value_options"]
+                if "value_options" in prop
                 else None
             )
-            columns = properties[name]["columns"] if "columns" in properties[name] else None
-            types = properties[name]["types"] if "types" in properties[name] else None
-            if "property" in properties[name]:
-                value = getattr(self.selected_item, properties[name]["get"])
-                if "get_index" in properties[name]:
-                    try:
-                        value = value[properties[name]["get_index"]]
-                    except TypeError:
-                        value = value
-            elif "get_index" in properties[name]:
-                value = getattr(self.selected_item, properties[name]["get"])()
-                try:
-                    value = value[properties[name]["get_index"]]
-                except TypeError:
-                    value = value
-            else:
-                value = getattr(self.selected_item, properties[name]["get"])()
+            types = prop["types"] if "types" in prop else None
+            get_index = prop["get_index"] if "get_index" in prop else None
+            value = get_value(item, prop["get"], get_index)
 
-            if value_type == "tuple":
-                columns = properties[name]["columns"]
-                types = properties[name]["types"]
-            elif value_type == "dict":
-                types = properties[name]["types"]
+            if value_type == "tuple" or value_type == "dict":
+                types = prop["types"]
 
-            self.pi.add_property(name, value_type, value, value_options, columns, types)
+            self.pi.add_property(property_name, value_type, value, value_options, types)
 
     def on_property_changed(self, property_name, value):
         item = self.selected_item
@@ -142,6 +125,22 @@ class FigureManager(QWidget):
 
     def convert_to_gridspec(self, figure):
         pass
+
+def get_value(obj, attr_path, index=None):
+    attrs = attr_path.split(".")
+    for attr in attrs:
+        obj = getattr(obj, attr)
+    if callable(obj):
+        print(f"Calling {attr_path}()")
+        value = obj()
+    else:
+        value = obj
+    if index is not None:
+        try:
+            value = value[index]
+        except TypeError:
+            value = value
+    return value
 
 
 def create_default_figure():

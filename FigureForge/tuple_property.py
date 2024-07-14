@@ -12,10 +12,10 @@ from PySide6.QtCore import Signal
 
 class TupleProperty(QWidget):
     valueChanged = Signal(object)
-    def __init__(self, columns, types, values):
+    def __init__(self, types, values):
         super().__init__()
 
-        self.columns = columns
+        self.columns = len(types)
         self.types = types
         self.values = values
 

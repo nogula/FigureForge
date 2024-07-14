@@ -67,7 +67,7 @@ class PropertyInspector(QWidget):
             if item.widget():
                 item.widget().deleteLater()
 
-    def add_property(self, name, value_type, value, value_options=None, columns=None, types=None, values=None):
+    def add_property(self, name, value_type, value, value_options=None, types=None):
         row = self.content_layout.rowCount()
         self.content_layout.addWidget(QLabel(name), row, 0, Qt.AlignTop)
         self.content_layout.addWidget(QLabel(value_type), row, 1, Qt.AlignTop)
@@ -131,7 +131,7 @@ class PropertyInspector(QWidget):
             )
             self.content_layout.addWidget(value_widget, row, 2)
         elif value_type == "tuple":
-            value_widget = TupleProperty(columns=columns, types=types, values=value)
+            value_widget = TupleProperty(types=types, values=value)
             value_widget.valueChanged.connect(
                 lambda n=name, w=value_widget: self.on_value_changed(n, w)
             )
