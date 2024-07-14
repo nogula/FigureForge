@@ -7,7 +7,9 @@ from PySide6.QtWidgets import (
     QMessageBox,
 )
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from PySide6 import QtCore
+# from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
 
@@ -65,7 +67,8 @@ class FigureManager(QWidget):
 
     def new_figure(self):
         self.figure.clear()
-        self.convert_to_gridspec(self.figure)
+        self.file_name = None
+        self.unsaved_changes = False
         self.canvas.draw()
         self.fe.build_tree(self.figure)
 
@@ -92,12 +95,12 @@ class FigureManager(QWidget):
         obj_class = obj.__class__.__name__
         prop = self.structure[obj_class]["attributes"][property_name]
         set_method = prop["set"]
-        
+
         if "set_parameter" in prop:
             parameter = prop["set_parameter"]
             value = {parameter: value}
         self.set_value(obj, set_method, value)
-        
+
         self.canvas.draw()
         self.unsaved_changes = True
 
@@ -118,9 +121,6 @@ class FigureManager(QWidget):
         except NotImplementedError:
             QMessageBox.critical(self, "Error", "Cannot delete this item.")
 
-    def convert_to_gridspec(self, figure):
-        pass
-
     def toggle_debug_mode(self):
         self.debug = not self.debug
         print(f"Debug mode: {self.debug}")
@@ -129,6 +129,8 @@ class FigureManager(QWidget):
         attrs = attr_path.split(".")
         for attr in attrs:
             obj = getattr(obj, attr)
+            if callable(obj):
+                obj = obj()
         if callable(obj):
             value = obj()
         else:
@@ -142,11 +144,12 @@ class FigureManager(QWidget):
                 value = value
         return value
 
-
     def set_value(self, obj, attr_path, value):
         attrs = attr_path.split(".")
         for attr in attrs[:-1]:
             obj = getattr(obj, attr)
+            if callable(obj):
+                obj = obj()
         if type(value) == dict:
             if self.debug:
                 print(f"Calling {attr_path}({value}) on {obj}")
@@ -212,7 +215,7 @@ def create_default_figure():
         arrowprops=dict(
             arrowstyle="->", connectionstyle="arc3,rad=0.5", facecolor="black", lw=0.5
         ),
-    ).draggable()
+    )
     fig.colorbar(scatter, ax=axs[0, 1])
 
     # Bar chart

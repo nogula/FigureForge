@@ -17,17 +17,25 @@
         "set": "set_layout_engine",
         "value_options": ["constrained", "compressed", "tight", "none"]
       },
-
       "Title": {
         "type": "string",
         "get": "get_suptitle",
         "set": "suptitle"
       },
-
       "Face Color": {
         "type": "color",
         "get": "get_facecolor",
         "set": "set_facecolor"
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
       }
     }
   },
@@ -97,6 +105,16 @@
         "get": "get_yscale",
         "set": "set_yscale",
         "value_options": ["linear", "log", "symlog", "logit"]
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
       }
     }
   },
@@ -132,6 +150,16 @@
         "get": "get_linestyle",
         "set": "set_linestyle",
         "value_options": ["solid", "dashed", "dashdot", "dotted"]
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
       }
     }
   },
@@ -176,6 +204,16 @@
         "get_index": 1,
         "set": "set_bounds",
         "set_parameter": "high"
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
       }
     }
   },
@@ -251,7 +289,6 @@
       },
       "Position": {
         "type": "tuple",
-        "columns": 2,
         "types": ["float", "float"],
         "get": "get_position",
         "set": "set_position"
@@ -267,6 +304,16 @@
         "get": "get_verticalalignment",
         "set": "set_verticalalignment",
         "value_options": ["baseline","bottom","center","center_baseline","top"]
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
       }
     }
   },
@@ -296,6 +343,16 @@
         "type": "float",
         "get": "get_linewidth",
         "set": "set_linewidth"
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
       }
     }
   },
@@ -377,6 +434,16 @@
         "type": "color",
         "get": "get_markerfacecolor",
         "set": "set_markerfacecolor"
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
       }
     }
   },
@@ -473,7 +540,6 @@
         "type": "tuple",
         "columns": 2,
         "types": ["float", "float"],
-        "property": true,
         "get": "xyann",
         "set": "xyann"
       },
@@ -485,9 +551,7 @@
       },
       "Annotation Position": {
         "type": "tuple",
-        "columns": 2,
         "types": ["float", "float"],
-        "property": true,
         "get": "xy",
         "set": "xy"
       },
@@ -496,8 +560,194 @@
         "get": "get_anncoords",
         "set": "set_anncoords",
         "value_options": ["data", "axes points", "axes pixels", "axes fraction", "figure points", "figure pixels", "figure fraction", "subfigure points", "subfigure pixels", "subfigure fraction", "polar"]
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
+      }
+    }
+  },
+  "XAxis": {
+    "attributes": {
+      "Label": {
+        "type": "string",
+        "get": "get_label_text",
+        "set": "set_label_text"
+      },
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Label Position": {
+        "type": "choice",
+        "get": "get_label_position",
+        "set": "set_label_position",
+        "value_options": ["top", "bottom"]
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
+      }
+    }
+  },
+  "YAxis": {
+    "attributes": {
+      "Label": {
+        "type": "string",
+        "get": "get_label_text",
+        "set": "set_label_text"
+      },
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Label Position": {
+        "type": "choice",
+        "get": "get_label_position",
+        "set": "set_label_position",
+        "value_options": ["top", "bottom"]
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
+      }
+    }
+  },
+  "Legend": {
+    "attributes": {
+      "Visible": {
+        "type": "bool",
+        "get": "get_visible",
+        "set": "set_visible"
+      },
+      "Frame On": {
+        "type": "bool",
+        "get": "get_frame_on",
+        "set": "set_frame_on"
+      },
+      "Location": {
+        "type": "choice",
+        "get": "_get_loc",
+        "set": "set_loc",
+        "value_options": [
+          "best",
+          "upper right",
+          "upper left",
+          "lower left",
+          "lower right",
+          "right",
+          "center left",
+          "center right",
+          "lower center",
+          "upper center",
+          "center"
+        ]
+      },
+      "Title": {
+        "type": "string",
+        "get": "get_title.get_text",
+        "set": "set_title"
+      },
+      "Title Font Size": {
+        "type": "float",
+        "get": "get_title.get_fontsize",
+        "set": "get_title.set_fontsize"
+      },
+      "Title Font Name": {
+        "type": "string",
+        "get": "get_title.get_fontname",
+        "set": "get_title.set_fontname"
+      },
+      "Title Font Style": {
+        "type": "choice",
+        "get": "get_title.get_fontstyle",
+        "set": "get_title.set_fontstyle",
+        "value_options": ["normal", "italic", "oblique"]
+      },
+      "Title Font Weight": {
+        "type": "choice",
+        "get": "get_title.get_fontweight",
+        "set": "get_title.set_fontweight",
+        "value_options": [
+          "ultralight",
+          "light",
+          "normal",
+          "regular",
+          "book",
+          "medium",
+          "roman",
+          "semibold",
+          "demibold",
+          "demi",
+          "bold",
+          "heavy",
+          "extra bold",
+          "black"
+        ]
+      },
+      "Title Font Stretch": {
+        "type": "choice",
+        "get": "get_title.get_stretch",
+        "set": "get_title.set_fontstretch",
+        "value_options": ["ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded"]
+      },
+      "Title Color": {
+        "type": "color",
+        "get": "get_title.get_color",
+        "set": "get_title.set_color"
+      },
+      "Title Horizontal Alignment": {
+        "type": "choice",
+        "get": "get_title.get_horizontalalignment",
+        "set": "get_title.set_horizontalalignment",
+        "value_options": ["center", "right", "left"]
+      },
+      "Title Vertical Alignment": {
+        "type": "choice",
+        "get": "get_title.get_verticalalignment",
+        "set": "get_title.set_verticalalignment",
+        "value_options": ["baseline","bottom","center","center_baseline","top"]
+      },
+      "Title Alpha": {
+        "type": "float",
+        "get": "get_title.get_alpha",
+        "set": "get_title.set_alpha"
+      },
+      "Title Z Order": {
+        "type": "float",
+        "get": "get_title.get_zorder",
+        "set": "get_title.set_zorder"
+      },
+      "Alpha": {
+        "type": "float",
+        "get": "get_alpha",
+        "set": "set_alpha"
+      },
+      "Z Order": {
+        "type": "float",
+        "get": "zorder",
+        "set": "set_zorder"
       }
     }
   }
 }
-
