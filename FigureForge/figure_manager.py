@@ -23,22 +23,27 @@ class FigureManager(QWidget):
         self.pi = PropertyInspector()
         self.fe = FigureExplorer()
 
+        # Setup the figure and canvas
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
         self.unsaved_changes = False
         self.file_name = None
 
+        # Only when GUI is started, create the default figure
         self.new_figure()
         self.figure.__dict__.update(create_default_figure().__dict__)
         self.canvas.draw()
         self.fe.build_tree(self.figure)
 
+        # Connect signals to slots
         self.fe.itemSelected.connect(self.on_item_selected)
         self.pi.propertyChanged.connect(self.on_property_changed)
-
         self.selected_item = None
 
+        # Load the JSON figure property structure as a dict
         self.load_json_structure()
+
+        self.debug = False
 
     def load_json_structure(self):
         with open(os.path.join(CURRENT_DIR, "structure.json")) as file:
@@ -50,9 +55,7 @@ class FigureManager(QWidget):
             data = pickle.load(file)
         self.figure.__dict__.update(data.__dict__)
         self.canvas.draw()
-
         self.unsaved_changes = False
-
         self.fe.build_tree(self.figure)
 
     def save_figure(self, file_name):
@@ -64,24 +67,20 @@ class FigureManager(QWidget):
         self.figure.clear()
         self.convert_to_gridspec(self.figure)
         self.canvas.draw()
-
         self.fe.build_tree(self.figure)
 
-    def on_item_selected(self, item):
-        self.selected_item = item
+    def on_item_selected(self, obj):
+        self.selected_item = obj
         self.pi.clear_properties()
-        properties = self.structure[item.__class__.__name__]["attributes"]
+        properties = self.structure[obj.__class__.__name__]["attributes"]
+
         for property_name in properties:
             prop = properties[property_name]
             value_type = prop["type"]
-            value_options = (
-                prop["value_options"]
-                if "value_options" in prop
-                else None
-            )
+            value_options = prop["value_options"] if "value_options" in prop else None
             types = prop["types"] if "types" in prop else None
             get_index = prop["get_index"] if "get_index" in prop else None
-            value = get_value(item, prop["get"], get_index)
+            value = self.get_value(obj, prop["get"], get_index)
 
             if value_type == "tuple" or value_type == "dict":
                 types = prop["types"]
@@ -89,20 +88,16 @@ class FigureManager(QWidget):
             self.pi.add_property(property_name, value_type, value, value_options, types)
 
     def on_property_changed(self, property_name, value):
-        item = self.selected_item
-        item_class = item.__class__.__name__
-        set_method = self.structure[item_class]["attributes"][property_name]["set"]
-        get_method = self.structure[item_class]["attributes"][property_name]["get"]
-        if "set_parameter" in self.structure[item_class]["attributes"][property_name]:
-            parameter = self.structure[item_class]["attributes"][property_name][
-                "set_parameter"
-            ]
+        obj = self.selected_item
+        obj_class = obj.__class__.__name__
+        prop = self.structure[obj_class]["attributes"][property_name]
+        set_method = prop["set"]
+        
+        if "set_parameter" in prop:
+            parameter = prop["set_parameter"]
             value = {parameter: value}
-            getattr(item, set_method)(**value)
-        elif "property" in self.structure[item_class]["attributes"][property_name]:
-            setattr(item, set_method, value)
-        else:
-            getattr(item, set_method)(value)
+        self.set_value(obj, set_method, value)
+        
         self.canvas.draw()
         self.unsaved_changes = True
 
@@ -126,21 +121,44 @@ class FigureManager(QWidget):
     def convert_to_gridspec(self, figure):
         pass
 
-def get_value(obj, attr_path, index=None):
-    attrs = attr_path.split(".")
-    for attr in attrs:
-        obj = getattr(obj, attr)
-    if callable(obj):
-        print(f"Calling {attr_path}()")
-        value = obj()
-    else:
-        value = obj
-    if index is not None:
-        try:
-            value = value[index]
-        except TypeError:
-            value = value
-    return value
+    def toggle_debug_mode(self):
+        self.debug = not self.debug
+        print(f"Debug mode: {self.debug}")
+
+    def get_value(self, obj, attr_path, index=None):
+        attrs = attr_path.split(".")
+        for attr in attrs:
+            obj = getattr(obj, attr)
+        if callable(obj):
+            value = obj()
+        else:
+            value = obj
+        if index is not None:
+            try:
+                value = value[index]
+            except TypeError:
+                if self.debug:
+                    print(f"Indexing failed on {value} for {obj}")
+                value = value
+        return value
+
+
+    def set_value(self, obj, attr_path, value):
+        attrs = attr_path.split(".")
+        for attr in attrs[:-1]:
+            obj = getattr(obj, attr)
+        if type(value) == dict:
+            if self.debug:
+                print(f"Calling {attr_path}({value}) on {obj}")
+            getattr(obj, attrs[-1])(**value)
+        elif callable(getattr(obj, attrs[-1])):
+            if self.debug:
+                print(f"Calling {attr_path}({value}) on {obj}")
+            getattr(obj, attrs[-1])(value)
+        else:
+            if self.debug:
+                print(f"Setting {attr_path} to {value} on {obj}")
+            setattr(obj, attrs[-1], value)
 
 
 def create_default_figure():

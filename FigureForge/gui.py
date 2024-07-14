@@ -121,6 +121,15 @@ class MainWindow(QMainWindow):
         reload_structure_action.setShortcut("Ctrl+R")
         edit_menu.addAction(reload_structure_action)
 
+        debug_mode_action = QAction("Debug Mode", self)
+        debug_mode_action.setCheckable(True)
+        debug_mode_action.triggered.connect(self.toggle_debug_mode)
+        debug_mode_action.setShortcut("Ctrl+D")
+        debug_mode_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/debug_icon.png"))
+        )
+        edit_menu.addAction(debug_mode_action)
+
         self.plugin_menu = menubar.addMenu("Plugins")
         self.plugin_menu.setToolTipsVisible(True)
 
@@ -391,7 +400,6 @@ class MainWindow(QMainWindow):
 
             for action in actions_to_remove:
                 self.plugin_menu.removeAction(action)
-        
 
         plugin_dir = os.path.join(CURRENT_DIR, "plugins")
         if not os.path.exists(plugin_dir):
@@ -503,3 +511,6 @@ class MainWindow(QMainWindow):
     def reload_json_structure(self):
         self.fm.load_json_structure()
         print("Reloaded JSON structure.")
+
+    def toggle_debug_mode(self):
+        self.fm.toggle_debug_mode()
