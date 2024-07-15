@@ -474,16 +474,16 @@ class MainWindow(QMainWindow):
             )
 
     def run_plugin(self, plugin_class):
-        selected_item = self.fm.selected_item
-        if selected_item:
+        selected_obj = self.fm.selected_obj
+        if selected_obj:
             plugin = plugin_class()
-            plugin.run(selected_item)
+            plugin.run(selected_obj)
             self.fm.canvas.draw()
             self.fm.unsaved_changes = True
             self.fm.fe.build_tree(self.fm.figure)
 
     def delete_item(self):
-        self.fm.delete_item()
+        self.fm.delete_obj()
 
     def configure_gridspec(self):
         raise NotImplementedError
