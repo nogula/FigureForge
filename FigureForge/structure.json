@@ -512,18 +512,6 @@
         "get": "get_color",
         "set": "set_color"
       },
-      "X Position": {
-        "type": "float",
-        "get": "get_position",
-        "get_index": 0,
-        "set": "set_x"
-      },
-      "Y Position": {
-        "type": "float",
-        "get": "get_position",
-        "get_index": 1,
-        "set": "set_y"
-      },
       "Horizontal Alignment": {
         "type": "choice",
         "get": "get_horizontalalignment",
