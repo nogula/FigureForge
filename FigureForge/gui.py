@@ -31,11 +31,13 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, splash):
         super().__init__()
         self.setWindowTitle("FigureForge")
         self.setWindowIcon(QIcon(os.path.join(CURRENT_DIR, "resources/icons/logo.png")))
         self.setMinimumSize(800, 600)
+
+        self.splash = splash
 
         self.create_menus()
         self.init_ui()
@@ -44,6 +46,7 @@ class MainWindow(QMainWindow):
 
     def create_menus(self):
         """Creates the menubar at the top of the main window."""
+        self.splash.showMessage("Creating Menus...", Qt.AlignBottom | Qt.AlignLeft)
         menubar = self.menuBar()
 
         file_menu = menubar.addMenu("File")
@@ -175,6 +178,8 @@ class MainWindow(QMainWindow):
         help_menu.addAction(bug_action)
 
     def init_ui(self):
+        """Initializes the main window."""
+        self.splash.showMessage("Initializing UI...", Qt.AlignBottom | Qt.AlignLeft)
         splitter = QSplitter(Qt.Horizontal)
         splitter.setContentsMargins(0, 0, 0, 0)
         splitter.setStyleSheet(
@@ -389,6 +394,7 @@ class MainWindow(QMainWindow):
         dialog.exec()
 
     def load_plugins(self, reload=False):
+        self.splash.showMessage("Loading Plugins...", Qt.AlignBottom | Qt.AlignLeft)
         if reload:
             actions = self.plugin_menu.actions()
             total_actions = len(actions)
