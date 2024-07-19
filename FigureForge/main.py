@@ -9,11 +9,12 @@ from .__init__ import CURRENT_DIR
 
 
 def create_splash(app):
-    pixmap = QPixmap(os.path.join(CURRENT_DIR, "resources","assets","splash.png"))
+    pixmap = QPixmap(os.path.join(CURRENT_DIR, "resources", "assets", "splash.png"))
     splash = QSplashScreen(pixmap)
     splash.showMessage("Loading FigureForge...", Qt.AlignBottom | Qt.AlignLeft)
     splash.show()
     return splash
+
 
 def main():
     app = QApplication([])
@@ -22,7 +23,6 @@ def main():
     window.show()
     splash.finish(window)
     app.exec()
-
 
 
 if __name__ == "__main__":

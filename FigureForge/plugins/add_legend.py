@@ -22,7 +22,7 @@ class AddLegend:
             msg_failure.setIcon(QMessageBox.Warning)
             msg_failure.exec()
             return
-        
+
         dialog = AddLegendDialog()
         if dialog.exec() == QDialog.Accepted:
             legend = dialog.get_legend()
@@ -32,4 +32,3 @@ class AddLegend:
             msg_success.setText("Legend added successfully.")
             msg_success.setIcon(QMessageBox.Information)
             msg_success.exec()
-        

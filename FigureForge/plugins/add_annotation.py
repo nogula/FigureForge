@@ -22,7 +22,7 @@ class AddAnnotation:
             msg_failure.setIcon(QMessageBox.Warning)
             msg_failure.exec()
             return
-        
+
         dialog = AddAnnotationsDialog()
         if dialog.exec() == QDialog.Accepted:
             annotation = dialog.get_annotation()
@@ -32,4 +32,3 @@ class AddAnnotation:
             msg_success.setText("Annotations added successfully.")
             msg_success.setIcon(QMessageBox.Information)
             msg_success.exec()
-        

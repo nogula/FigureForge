@@ -9,11 +9,12 @@ from PySide6.QtWidgets import (
     QComboBox,
     QLabel,
     QFormLayout,
-    QHBoxLayout
+    QHBoxLayout,
 )
 from PySide6.QtGui import QColor
 
 from ...color_button import ColorButton
+
 
 class AddAnnotationsDialog(QDialog):
     def __init__(self):
@@ -35,7 +36,9 @@ class AddAnnotationsDialog(QDialog):
         self.y.setMinimum(-1e6)
         self.y.setMaximum(1e6)
         self.xycoords = QComboBox()
-        self.xycoords.addItems(["data", "axes", "figure", "offset points", "offset pixels"])
+        self.xycoords.addItems(
+            ["data", "axes", "figure", "offset points", "offset pixels"]
+        )
         xy_layout.addWidget(self.x)
         xy_layout.addWidget(self.y)
         xy_layout.addWidget(self.xycoords)
@@ -49,7 +52,9 @@ class AddAnnotationsDialog(QDialog):
         self.ytext.setMinimum(-1e6)
         self.ytext.setMaximum(1e6)
         self.xytextcoords = QComboBox()
-        self.xytextcoords.addItems(["data", "axes", "figure", "offset points", "offset pixels"])
+        self.xytextcoords.addItems(
+            ["data", "axes", "figure", "offset points", "offset pixels"]
+        )
         xytext_layout.addWidget(self.xtext)
         xytext_layout.addWidget(self.ytext)
         xytext_layout.addWidget(self.xytextcoords)
@@ -61,9 +66,40 @@ class AddAnnotationsDialog(QDialog):
 
         arrowprops_layout = QFormLayout()
         self.arrowstyle = QComboBox()
-        self.arrowstyle.addItems(["-", "->", "<-", "<->", "<|-", "-|>", "<|-|>", "-[", "]-", "]-[", "|-|", "]->","<-["])
+        self.arrowstyle.addItems(
+            [
+                "-",
+                "->",
+                "<-",
+                "<->",
+                "<|-",
+                "-|>",
+                "<|-|>",
+                "-[",
+                "]-",
+                "]-[",
+                "|-|",
+                "]->",
+                "<-[",
+            ]
+        )
         self.connectionstyle = QComboBox()
-        self.connectionstyle.addItems(["arc", "arc3", "arc", "angle", "angle3", "angle", "bar", "bar", "bar", "angle", "angle3", "angle"])
+        self.connectionstyle.addItems(
+            [
+                "arc",
+                "arc3",
+                "arc",
+                "angle",
+                "angle3",
+                "angle",
+                "bar",
+                "bar",
+                "bar",
+                "angle",
+                "angle3",
+                "angle",
+            ]
+        )
         shrink_layout = QHBoxLayout()
         self.shrinkA = QDoubleSpinBox()
         self.shrinkA.setMinimum(-1e6)
@@ -115,18 +151,19 @@ class AddAnnotationsDialog(QDialog):
             spinbox.setValue(value)
             self.connectionattrs_widgets[attr] = spinbox
             connectionattrs_layout.addRow(QLabel(attr), spinbox)
-        
+
         arrowprops_layout.addRow(QLabel("Arrow Style:"), self.arrowstyle)
         arrowprops_layout.addRow(QLabel("Connection Style:"), self.connectionstyle)
         arrowprops_layout.addRow(QLabel("Shrink (A, B):"), shrink_layout)
         arrowprops_layout.addRow(QLabel("Linewidth:"), self.linewidth)
         arrowprops_layout.addRow(QLabel("Color:"), self.color)
         arrowprops_layout.addRow(QLabel("Arrow Attributes:"), arrowattrs_layout)
-        arrowprops_layout.addRow(QLabel("Connection Attributes:"), connectionattrs_layout)
+        arrowprops_layout.addRow(
+            QLabel("Connection Attributes:"), connectionattrs_layout
+        )
 
         layout.addRow(QLabel("Arrow Properties:"), arrowprops_layout)
 
-        
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
@@ -135,26 +172,80 @@ class AddAnnotationsDialog(QDialog):
     def get_annotation(self):
         arrow_params = {
             "-": [],
-            "->": ["head_length", "head_width", "widthA", "widthB", "angleA", "angleB", "lengthA", "lengthB"],
-            "<-": ["head_length", "head_width", "widthA", "widthB", "angleA", "angleB", "lengthA", "lengthB"],
-            "<->": ["head_length", "head_width", "widthA", "widthB", "angleA", "angleB", "lengthA", "lengthB"],
-            "<|-": ["head_length", "head_width", "widthA", "widthB", "angleA", "angleB", "lengthA", "lengthB"],
-            "-|>": ["head_length", "head_width", "widthA", "widthB", "angleA", "angleB", "lengthA", "lengthB"],
-            "<|-|>": ["head_length", "head_width", "widthA", "widthB", "angleA", "angleB", "lengthA", "lengthB"],
-            "]-": ["widthA","lengthA","angleA"],
-            "-[": ["widthB","lengthB","angleB"],
-            "]-[": ["widthA","lengthA","angleA","widthB","lengthB","angleB"],
-            "|-|": ["widthA","angleA","widthB","angleB"],
-            "]->": ["widthA","angleA","lengthA"],
-            "<-[" : ["widthB","angleB","lengthB"]
+            "->": [
+                "head_length",
+                "head_width",
+                "widthA",
+                "widthB",
+                "angleA",
+                "angleB",
+                "lengthA",
+                "lengthB",
+            ],
+            "<-": [
+                "head_length",
+                "head_width",
+                "widthA",
+                "widthB",
+                "angleA",
+                "angleB",
+                "lengthA",
+                "lengthB",
+            ],
+            "<->": [
+                "head_length",
+                "head_width",
+                "widthA",
+                "widthB",
+                "angleA",
+                "angleB",
+                "lengthA",
+                "lengthB",
+            ],
+            "<|-": [
+                "head_length",
+                "head_width",
+                "widthA",
+                "widthB",
+                "angleA",
+                "angleB",
+                "lengthA",
+                "lengthB",
+            ],
+            "-|>": [
+                "head_length",
+                "head_width",
+                "widthA",
+                "widthB",
+                "angleA",
+                "angleB",
+                "lengthA",
+                "lengthB",
+            ],
+            "<|-|>": [
+                "head_length",
+                "head_width",
+                "widthA",
+                "widthB",
+                "angleA",
+                "angleB",
+                "lengthA",
+                "lengthB",
+            ],
+            "]-": ["widthA", "lengthA", "angleA"],
+            "-[": ["widthB", "lengthB", "angleB"],
+            "]-[": ["widthA", "lengthA", "angleA", "widthB", "lengthB", "angleB"],
+            "|-|": ["widthA", "angleA", "widthB", "angleB"],
+            "]->": ["widthA", "angleA", "lengthA"],
+            "<-[": ["widthB", "angleB", "lengthB"],
         }
         connection_params = {
-            "arc": ["angleA", "angleB", "armA","armB","rad"],
+            "arc": ["angleA", "angleB", "armA", "armB", "rad"],
             "arc3": ["rad"],
-            "bar": ["armA","armB","fraction","angle"],
-            "angle": ["angleA", "angleB","rad"],
-            "angle3": ["angleA","angleB"],
-            "none": []
+            "bar": ["armA", "armB", "fraction", "angle"],
+            "angle": ["angleA", "angleB", "rad"],
+            "angle3": ["angleA", "angleB"],
+            "none": [],
         }
         if self.use_arrow.isChecked():
             arrowstyle_string = ""
@@ -172,7 +263,9 @@ class AddAnnotationsDialog(QDialog):
                 param_value = self.connectionattrs_widgets[param].value()
                 connectionstyle_string += f"{param}={param_value},"
             connectionstyle_string = connectionstyle_string[:-1]
-            connectionstyle_string = self.connectionstyle.currentText() + ", " + connectionstyle_string
+            connectionstyle_string = (
+                self.connectionstyle.currentText() + ", " + connectionstyle_string
+            )
             arrowprops = {
                 "arrowstyle": arrowstyle_string,
                 "connectionstyle": connectionstyle_string,

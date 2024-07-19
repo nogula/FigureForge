@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QDialogButtonBox,
     QDialog,
-    QPlainTextEdit
+    QPlainTextEdit,
 )
 
 
@@ -23,6 +23,4 @@ class AddLegendDialog(QDialog):
         self.layout.addWidget(self.buttons)
 
     def get_legend(self):
-        return {
-            "labels": self.layout.itemAt(0).widget().toPlainText().split("\n")
-        }
+        return {"labels": self.layout.itemAt(0).widget().toPlainText().split("\n")}

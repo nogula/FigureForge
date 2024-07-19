@@ -404,9 +404,20 @@ class MainWindow(QMainWindow):
                 self.plugin_menu.removeAction(action)
 
         plugin_dir = os.path.join(CURRENT_DIR, "plugins")
-        plugin_requirements_filepath = os.path.join(plugin_dir, "plugin_requirements.txt")
+        plugin_requirements_filepath = os.path.join(
+            plugin_dir, "plugin_requirements.txt"
+        )
         if os.path.exists(plugin_requirements_filepath):
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", plugin_requirements_filepath])
+            subprocess.check_call(
+                [
+                    sys.executable,
+                    "-m",
+                    "pip",
+                    "install",
+                    "-r",
+                    plugin_requirements_filepath,
+                ]
+            )
         if not os.path.exists(plugin_dir):
             return
 
