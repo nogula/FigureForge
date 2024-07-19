@@ -56,6 +56,13 @@
         "get": "get_aspect",
         "set": "set_aspect"
       },
+      "Position & Size": {
+        "type": "tuple",
+        "columns": 4,
+        "types": ["float", "float", "float", "float"],
+        "get": "get_position.bounds",
+        "set": "set_position"
+      },
       "X Label": {
         "type": "string",
         "get": "get_xlabel",
