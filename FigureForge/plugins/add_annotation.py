@@ -1,5 +1,4 @@
 import os
-from re import A
 
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
