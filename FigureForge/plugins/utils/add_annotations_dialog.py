@@ -1,4 +1,3 @@
-from multiprocessing import connection
 from PySide6.QtWidgets import (
     QMessageBox,
     QVBoxLayout,
