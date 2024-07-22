@@ -21,10 +21,11 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 
-from .__init__ import __version__, CURRENT_DIR
-from .figure_manager import FigureManager
-from .bug_report_dialog import BugReportDialog
-from .export_figure_dialog import ExportFigureDialog
+from FigureForge.__init__ import __version__, CURRENT_DIR
+from FigureForge.figure_manager import FigureManager
+from FigureForge.bug_report_dialog import BugReportDialog
+from FigureForge.export_figure_dialog import ExportFigureDialog
+from FigureForge.preferences import Preferences, PreferencesDialog
 
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -34,10 +35,14 @@ class MainWindow(QMainWindow):
     def __init__(self, splash):
         super().__init__()
         self.setWindowTitle("FigureForge")
-        self.setWindowIcon(QIcon(os.path.join(CURRENT_DIR, "resources/icons/logo.png")))
+        self.setWindowIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
+        )
         self.setMinimumSize(800, 600)
 
         self.splash = splash
+
+        self.preferences = Preferences()
 
         self.create_menus()
         self.init_ui()
@@ -135,6 +140,13 @@ class MainWindow(QMainWindow):
             QIcon(os.path.join(CURRENT_DIR, "resources/icons/debug_icon.png"))
         )
         edit_menu.addAction(debug_mode_action)
+
+        preferences_action = QAction("Preferences", self)
+        preferences_action.triggered.connect(self.show_preferences_dialog)
+        preferences_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/preferences_icon.png"))
+        )
+        edit_menu.addAction(preferences_action)
 
         self.plugin_menu = menubar.addMenu("Plugins")
         self.plugin_menu.setToolTipsVisible(True)
@@ -345,7 +357,7 @@ class MainWindow(QMainWindow):
         dialog = QDialog()
         dialog.setWindowTitle("About FigureForge")
         dialog.setWindowIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/logo.png"))
+            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
         )
         layout = QGridLayout()
 
@@ -408,16 +420,25 @@ class MainWindow(QMainWindow):
             plugin_dir, "plugin_requirements.txt"
         )
         if os.path.exists(plugin_requirements_filepath):
-            subprocess.check_call(
-                [
-                    sys.executable,
-                    "-m",
-                    "pip",
-                    "install",
-                    "-r",
-                    plugin_requirements_filepath,
-                ]
-            )
+            try:
+                subprocess.check_call(
+                    [
+                        sys.executable,
+                        "-m",
+                        "pip",
+                        "install",
+                        "-r",
+                        plugin_requirements_filepath,
+                    ]
+                )
+            except Exception as e:
+                msgbox = QMessageBox()
+                msgbox.setIcon(QMessageBox.Critical)
+                msgbox.setWindowTitle("Plugin Error")
+                msgbox.setText("Failed to install plugin requirements.")
+                msgbox.setInformativeText(str(e))
+                msgbox.exec_()
+                
         if not os.path.exists(plugin_dir):
             return
 
@@ -530,3 +551,7 @@ class MainWindow(QMainWindow):
 
     def toggle_debug_mode(self):
         self.fm.toggle_debug_mode()
+
+    def show_preferences_dialog(self):
+        dialog = PreferencesDialog(self.preferences, self)
+        dialog.exec_()
