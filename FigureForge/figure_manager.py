@@ -14,9 +14,9 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
 
-from .__init__ import CURRENT_DIR
-from .property_inspector import PropertyInspector
-from .figure_explorer import FigureExplorer
+from FigureForge.__init__ import CURRENT_DIR
+from FigureForge.property_inspector import PropertyInspector
+from FigureForge.figure_explorer import FigureExplorer
 
 
 class FigureManager(QWidget):

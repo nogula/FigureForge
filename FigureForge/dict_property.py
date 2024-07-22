@@ -11,8 +11,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Signal
 
-from .tuple_property import TupleProperty
-from .color_button import ColorButton
+from FigureForge.tuple_property import TupleProperty
+from FigureForge.color_button import ColorButton
 
 
 class DictProperty(QWidget):

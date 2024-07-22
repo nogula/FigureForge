@@ -24,14 +24,16 @@ from PySide6.QtGui import QIcon
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+from FigureForge.__init__ import CURRENT_DIR
 
 
 class ExportFigureDialog(QDialog):
     def __init__(self, figure, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Export Figure")
-        self.setWindowIcon(QIcon(os.path.join(CURRENT_DIR, "resources/icons/logo.png")))
+        self.setWindowIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
+        )
         self.setMinimumSize(800, 600)
 
         self.figure = figure

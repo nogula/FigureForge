@@ -15,9 +15,9 @@ from PySide6.QtCore import Signal
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt
 
-from .color_button import ColorButton
-from .tuple_property import TupleProperty
-from .dict_property import DictProperty
+from FigureForge.color_button import ColorButton
+from FigureForge.tuple_property import TupleProperty
+from FigureForge.dict_property import DictProperty
 import matplotlib.colors as mcolors
 
 
