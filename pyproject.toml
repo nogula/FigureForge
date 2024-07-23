@@ -6,13 +6,18 @@ authors = ["Noah Gula <noahrgula@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "<3.13,>=3.9"
 numpy = "^2.0.0"
 pandas = "^2.2.2"
 matplotlib = "^3.9.1"
 PySide6 = "^6.7.2"
-importlib = "^1.0.0"
+importlib = "^1.0.4"
+appdirs = "^1.4.4"
+pyqtdarktheme = "^2.1.0"
 
+[tool.poetry.group.dev.dependencies]
+pyinstaller = "^6.9.0"
+black = "^24.4.2"
 
 [build-system]
 requires = ["poetry-core"]

@@ -21,6 +21,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 
+import qdarktheme
+
 from FigureForge.__init__ import __version__, CURRENT_DIR
 from FigureForge.figure_manager import FigureManager
 from FigureForge.bug_report_dialog import BugReportDialog
@@ -43,6 +45,7 @@ class MainWindow(QMainWindow):
         self.splash = splash
 
         self.preferences = Preferences()
+        qdarktheme.setup_theme(self.preferences.get("theme"))
 
         self.create_menus()
         self.init_ui()
@@ -194,16 +197,6 @@ class MainWindow(QMainWindow):
         self.splash.showMessage("Initializing UI...", Qt.AlignBottom | Qt.AlignLeft)
         splitter = QSplitter(Qt.Horizontal)
         splitter.setContentsMargins(0, 0, 0, 0)
-        splitter.setStyleSheet(
-            """
-                QSplitter::handle {
-                    background: lightgray;
-                }
-                QSplitter::handle:vertical {
-                    width: 2px;
-                }
-            """
-        )
 
         self.fm = FigureManager()
         self.fe = self.fm.fe
@@ -211,16 +204,6 @@ class MainWindow(QMainWindow):
 
         left_splitter = QSplitter(Qt.Vertical)
         left_splitter.setContentsMargins(0, 0, 5, 0)
-        left_splitter.setStyleSheet(
-            """
-            QSplitter::handle {
-                background: lightgray;
-            }
-            QSplitter::handle:vertical {
-                height: 2px;
-            }
-            """
-        )
 
         fe_header_layout = QHBoxLayout()
         fe_header_layout.setContentsMargins(0, 0, 0, 0)

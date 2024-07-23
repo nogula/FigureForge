@@ -16,6 +16,8 @@ from PySide6.QtWidgets import (
     QDialogButtonBox,
 )
 
+import qdarktheme
+
 from FigureForge.__init__ import CURRENT_DIR
 from FigureForge import __version__
 
@@ -31,7 +33,7 @@ class Preferences:
             "plugin_requirements": os.path.join(
                 CURRENT_DIR, "plugins", "requirements.txt"
             ),
-            "theme": "light",
+            "theme": "dark",
         }
         self.preferences = self.load_preferences()
 
@@ -57,6 +59,8 @@ class Preferences:
 
     def set(self, key, value):
         self.preferences[key] = value
+        if key == "theme":
+            qdarktheme.setup_theme(value)
         self.save_preferences()
 
     def print_config_path(self):
@@ -97,7 +101,7 @@ class PreferencesDialog(QDialog):
         )
 
         self.theme_combo = QComboBox(self)
-        self.theme_combo.addItems(["light", "dark"])
+        self.theme_combo.addItems(["auto","light","dark"])
         self.theme_combo.setCurrentText(self.preferences.get("theme"))
         theme_layout = QHBoxLayout()
         theme_layout.addWidget(self.theme_combo)
