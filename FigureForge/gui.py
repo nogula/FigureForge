@@ -415,10 +415,8 @@ class MainWindow(QMainWindow):
             for action in actions_to_remove:
                 self.plugin_menu.removeAction(action)
 
-        plugin_dir = os.path.join(CURRENT_DIR, "plugins")
-        plugin_requirements_filepath = os.path.join(
-            plugin_dir, "plugin_requirements.txt"
-        )
+        plugin_dir = self.preferences.get("plugin_directory")
+        plugin_requirements_filepath = self.preferences.get("plugin_requirements")
         if os.path.exists(plugin_requirements_filepath):
             try:
                 subprocess.check_call(
