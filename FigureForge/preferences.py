@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (
 from FigureForge.__init__ import CURRENT_DIR
 from FigureForge import __version__
 
+
 class Preferences:
     def __init__(self, app_name=__version__, app_author="FigureForge"):
         self.app_name = app_name
@@ -27,7 +28,9 @@ class Preferences:
         self.config_file = os.path.join(self.config_dir, "preferences.json")
         self.defaults = {
             "plugin_directory": os.path.join(CURRENT_DIR, "plugins"),
-            "plugin_requirements": os.path.join(CURRENT_DIR, "plugins", "requirements.txt"),
+            "plugin_requirements": os.path.join(
+                CURRENT_DIR, "plugins", "requirements.txt"
+            ),
             "theme": "light",
         }
         self.preferences = self.load_preferences()
@@ -89,9 +92,9 @@ class PreferencesDialog(QDialog):
         browse_requirements_button.clicked.connect(self.browse_plugin_requirements_file)
         plugin_requirements_layout.addWidget(browse_requirements_button)
 
-        form_layout.addRow(QLabel("Plugin Requirements File:"), plugin_requirements_layout)
-
-
+        form_layout.addRow(
+            QLabel("Plugin Requirements File:"), plugin_requirements_layout
+        )
 
         self.theme_combo = QComboBox(self)
         self.theme_combo.addItems(["light", "dark"])

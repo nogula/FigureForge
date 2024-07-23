@@ -436,7 +436,7 @@ class MainWindow(QMainWindow):
                 msgbox.setText("Failed to install plugin requirements.")
                 msgbox.setInformativeText(str(e))
                 msgbox.exec_()
-                
+
         if not os.path.exists(plugin_dir):
             return
 
