@@ -310,7 +310,7 @@ class MainWindow(QMainWindow):
             self.fm.save_figure(self.fm.file_name)
 
     def export_figure(self):
-        dialog = ExportFigureDialog(self.fm.figure)
+        dialog = ExportFigureDialog(self.preferences, self.fm.figure)
         dialog.exec()
         self.fm.canvas.draw()
         if self.fm.debug:

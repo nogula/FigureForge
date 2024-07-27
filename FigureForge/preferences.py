@@ -34,6 +34,7 @@ class Preferences:
                 CURRENT_DIR, "plugins", "requirements.txt"
             ),
             "theme": "dark",
+            "last_export_path": "",
         }
         self.preferences = self.load_preferences()
 
@@ -101,7 +102,7 @@ class PreferencesDialog(QDialog):
         )
 
         self.theme_combo = QComboBox(self)
-        self.theme_combo.addItems(["auto","light","dark"])
+        self.theme_combo.addItems(["auto", "light", "dark"])
         self.theme_combo.setCurrentText(self.preferences.get("theme"))
         theme_layout = QHBoxLayout()
         theme_layout.addWidget(self.theme_combo)

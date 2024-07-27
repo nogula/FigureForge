@@ -1,8 +1,6 @@
-import sys
-
 import os
+
 from PySide6.QtWidgets import (
-    QApplication,
     QDialog,
     QVBoxLayout,
     QHBoxLayout,
@@ -10,7 +8,6 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QFileDialog,
-    QComboBox,
     QSpinBox,
     QScrollArea,
     QWidget,
@@ -19,24 +16,24 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QDoubleSpinBox,
 )
-from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from FigureForge.__init__ import CURRENT_DIR
 
 
 class ExportFigureDialog(QDialog):
-    def __init__(self, figure, parent=None):
-        super().__init__(parent)
+    def __init__(self, preferences, figure):
+        super().__init__()
         self.setWindowTitle("Export Figure")
         self.setWindowIcon(
             QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
         )
         self.setMinimumSize(800, 600)
-
+        self.preferences = preferences
         self.figure = figure
+        self.last_export_path = preferences.get("last_export_path")
         self.init_ui()
 
     def init_ui(self):
@@ -48,6 +45,7 @@ class ExportFigureDialog(QDialog):
         form_layout = QFormLayout()
 
         self.path_edit = QLineEdit()
+        self.path_edit.setText(self.last_export_path)
         browse_button = QPushButton("Browse")
         browse_button.clicked.connect(self.browse)
 
@@ -132,6 +130,7 @@ class ExportFigureDialog(QDialog):
             self.figure.savefig(path, dpi=dpi)
             if self.open_file_checkbox.isChecked():
                 os.startfile(path)
+            self.preferences.set("last_export_path", path)
             self.accept()
         except Exception as e:
             error_dialog = QDialog(self)
