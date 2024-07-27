@@ -198,7 +198,7 @@ class MainWindow(QMainWindow):
         splitter = QSplitter(Qt.Horizontal)
         splitter.setContentsMargins(0, 0, 0, 0)
 
-        self.fm = FigureManager()
+        self.fm = FigureManager(self.preferences, self.setWindowTitle)
         self.fe = self.fm.fe
         self.pi = self.fm.pi
 

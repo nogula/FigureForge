@@ -35,11 +35,14 @@ class FigureManager(QWidget):
         propertyChanged: A signal emitted when a property is changed in the PropertyInspector.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, preferences, set_window_title_method) -> None:
         """
         Initializes a new instance of the FigureManager class.
         """
         super().__init__()
+        self.preferences = preferences
+        self.update_window_title = set_window_title_method
+
         self.debug = False
 
         self.pi = PropertyInspector()
@@ -88,6 +91,7 @@ class FigureManager(QWidget):
         self.figure.__dict__.update(data.__dict__)
         self.canvas.draw()
         self.unsaved_changes = False
+        self.update_window_title(f"FigureForge - {file_name}")
         self.fe.build_tree(self.figure)
         self.pi.clear_properties()
         if self.debug:
@@ -103,6 +107,7 @@ class FigureManager(QWidget):
         with open(file_name, "wb") as file:
             pickle.dump(self.figure, file)
         self.unsaved_changes = False
+        self.update_window_title(f"FigureForge - {file_name}")
         if self.debug:
             print(f"Saved figure to {file_name}")
 
@@ -113,6 +118,7 @@ class FigureManager(QWidget):
         self.figure.clear()
         self.file_name = None
         self.unsaved_changes = False
+        self.update_window_title(f"FigureForge - New Figure")
         self.canvas.draw()
         self.fe.build_tree(self.figure)
         if self.debug:
@@ -165,6 +171,7 @@ class FigureManager(QWidget):
 
         self.canvas.draw()
         self.unsaved_changes = True
+        self.update_window_title(f"FigureForge - {self.file_name} *Unsaved changes")
 
         if self.debug:
             print(f"Changed {property_name} to {value} on {obj_class}")
@@ -179,6 +186,7 @@ class FigureManager(QWidget):
         self.attempt_delete(self.selected_obj)
         self.canvas.draw()
         self.unsaved_changes = True
+        self.update_window_title(f"FigureForge - {self.file_name} *Unsaved changes")
 
         self.fe.build_tree(self.figure)
         self.selected_obj = None
