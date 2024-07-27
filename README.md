@@ -29,7 +29,7 @@ A Python GUI application for interactive creation and editing of matplotlib figu
     ```
 
 ## Help
-This project's wiki will host the documentation, but it hasn't been written yet... in the meantime, check out the [FAQ & Troubleshooting](https://github.com/nogula/FigureForge/wiki/FAQ-&-Troubleshooting) page, create a [new issue](https://github.com/nogula/FigureForge/issues), or ask a question in the [discussions](https://github.com/nogula/FigureForge/discussions/1).
+The documentation for FigureForge is available on the project's [wiki](https://github.com/nogula/FigureForge/wiki) -- it is still a work in progress, but in the meantime you might find the [FAQ & Troubleshooting](https://github.com/nogula/FigureForge/wiki/FAQ-&-Troubleshooting) page helpful. Consider also creating a [new issue](https://github.com/nogula/FigureForge/issues), or ask a question in the [discussions](https://github.com/nogula/FigureForge/discussions/1).
 
 ## Contributing
 Obviously, FigureForge is still early in development (no releases have been made yet). Correspondingly, there are many opportunities to implement features and fix bugs. If you want to pitch in, you are welcome to fork the project and make a pull request.
