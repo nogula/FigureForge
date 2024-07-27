@@ -46,4 +46,3 @@ FigureForge is possible only because of the open source technologies and resourc
 A unique function of FigureForge is its ability to work on matplotlib figures as part of any Python workflow. However, if you are looking for something more polished and are not so concerned with the serialization/data format of your figure, you might find the following projects of interest.
 - [Veusz](https://veusz.github.io/) is a scientific plotting and graphing program with a graphical user interface, designed to produce publication-ready 2D and 3D plots.
 - [LabPlot](https://labplot.kde.org/) open source and cross-platform Data Visualization and Analysis software accessible to everyone.
-- 
