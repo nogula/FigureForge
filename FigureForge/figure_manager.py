@@ -1,6 +1,8 @@
+
 import os
 import pickle
 import json
+from typing import Any
 
 from PySide6.QtWidgets import (
     QWidget,
@@ -9,7 +11,6 @@ from PySide6.QtWidgets import (
 
 from PySide6 import QtCore
 
-# from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
@@ -20,7 +21,28 @@ from FigureForge.figure_explorer import FigureExplorer
 
 
 class FigureManager(QWidget):
-    def __init__(self):
+    """
+    A class that manages the creation, loading, and modification of figures.
+
+    Attributes:
+        debug (bool): A flag indicating whether debug mode is enabled.
+        pi (PropertyInspector): An instance of the PropertyInspector class.
+        fe (FigureExplorer): An instance of the FigureExplorer class.
+        figure (Figure): The matplotlib Figure object.
+        canvas (FigureCanvas): The canvas for displaying the figure.
+        unsaved_changes (bool): A flag indicating whether there are unsaved changes.
+        file_name (str): The name of the file associated with the figure.
+        structure (dict): The JSON figure property structure.
+
+    Signals:
+        itemSelected: A signal emitted when an item is selected in the FigureExplorer.
+        propertyChanged: A signal emitted when a property is changed in the PropertyInspector.
+    """
+
+    def __init__(self) -> None:
+        """
+        Initializes a new instance of the FigureManager class.
+        """
         super().__init__()
         self.debug = False
 
@@ -47,14 +69,23 @@ class FigureManager(QWidget):
         # Load the JSON figure property structure as a dict
         self.load_json_structure()
 
-    def load_json_structure(self):
+    def load_json_structure(self) -> None:
+        """
+        Loads the JSON figure property structure from a file.
+        """
         json_file = os.path.join(CURRENT_DIR, "structure.json")
         with open(json_file) as file:
             self.structure = json.load(file)
         if self.debug:
             print(f"Loaded structure: {json_file}")
 
-    def load_figure(self, file_name):
+    def load_figure(self, file_name) -> None:
+        """
+        Loads a figure from a file.
+
+        Args:
+            file_name (str): The name of the file to load the figure from.
+        """
         self.new_figure()
         with open(file_name, "rb") as file:
             data = pickle.load(file)
@@ -62,17 +93,27 @@ class FigureManager(QWidget):
         self.canvas.draw()
         self.unsaved_changes = False
         self.fe.build_tree(self.figure)
+        self.pi.clear_properties()
         if self.debug:
             print(f"Loaded figure from {file_name}")
 
-    def save_figure(self, file_name):
+    def save_figure(self, file_name) -> None:
+        """
+        Saves the figure to a file.
+
+        Args:
+            file_name (str): The name of the file to save the figure to.
+        """
         with open(file_name, "wb") as file:
             pickle.dump(self.figure, file)
         self.unsaved_changes = False
         if self.debug:
             print(f"Saved figure to {file_name}")
 
-    def new_figure(self):
+    def new_figure(self) -> None:
+        """
+        Creates a new empty figure.
+        """
         self.figure.clear()
         self.file_name = None
         self.unsaved_changes = False
@@ -81,7 +122,13 @@ class FigureManager(QWidget):
         if self.debug:
             print("Created new figure")
 
-    def on_item_selected(self, obj):
+    def on_item_selected(self, obj) -> None:
+        """
+        Handles the selection of an item in the FigureExplorer.
+
+        Args:
+            obj: The selected object.
+        """
         self.selected_obj = obj
         self.pi.clear_properties()
         properties = self.structure[obj.__class__.__name__]["attributes"]
@@ -102,7 +149,14 @@ class FigureManager(QWidget):
         if self.debug:
             print(f"Selected {obj.__class__.__name__}")
 
-    def on_property_changed(self, property_name, value):
+    def on_property_changed(self, property_name: str, value) -> None:
+        """
+        Handles the change of a property in the PropertyInspector.
+
+        Args:
+            property_name (str): The name of the property that changed.
+            value: The new value of the property.
+        """
         obj = self.selected_obj
         obj_class = obj.__class__.__name__
         prop = self.structure[obj_class]["attributes"][property_name]
@@ -119,7 +173,10 @@ class FigureManager(QWidget):
         if self.debug:
             print(f"Changed {property_name} to {value} on {obj_class}")
 
-    def delete_obj(self):
+    def delete_obj(self) -> None:
+        """
+        Deletes the selected object and removes it from the figure explorer.
+        """
         if self.selected_obj is None:
             return
 
@@ -133,17 +190,37 @@ class FigureManager(QWidget):
         if self.debug:
             print(f"Attempting to delete {self.selected_obj}")
 
-    def attempt_delete(self, obj):
+    def attempt_delete(self, obj) -> None:
+        """
+        Attempts to delete an object, if it can be.
+
+        Args:
+            obj: The object to delete.
+        """
         try:
             obj.remove()
         except NotImplementedError:
             QMessageBox.critical(self, "Error", "Cannot delete this item.")
 
-    def toggle_debug_mode(self):
+    def toggle_debug_mode(self) -> None:
+        """
+        Toggles the debug mode.
+        """
         self.debug = not self.debug
         print(f"Debug mode: {self.debug}")
 
-    def get_value(self, obj, attr_path, index=None):
+    def get_value(self, obj, attr_path: str, index: None | int=None):
+        """
+        Gets the value of an attribute of an object.
+
+        Args:
+            obj: The object.
+            attr_path (str): The path to the attribute.
+            index: The index to use if the attribute is iterable.
+
+        Returns:
+            The value of the attribute.
+        """
         attrs = attr_path.split(".")
         for attr in attrs:
             obj = getattr(obj, attr)
@@ -162,7 +239,16 @@ class FigureManager(QWidget):
                 value = value
         return value
 
-    def set_value(self, obj, attr_path, value):
+    def set_value(self, obj, attr_path: str, value) -> None:
+        """
+        Sets the value of an attribute of an object. Attempts to discern whether
+        `attr_path` is is an attribute or setter method.
+
+        Args:
+            obj: The object.
+            attr_path (str): The path to the attribute.
+            value: The new value of the attribute.
+        """
         attrs = attr_path.split(".")
         for attr in attrs[:-1]:
             obj = getattr(obj, attr)
@@ -182,8 +268,13 @@ class FigureManager(QWidget):
             setattr(obj, attrs[-1], value)
 
 
-def create_default_figure():
+def create_default_figure() -> Figure:
+    """
+    Creates a default figure.
 
+    Returns:
+        The default figure.
+    """
     x = np.linspace(0, 10, 100)
     y = np.sin(x)
 
