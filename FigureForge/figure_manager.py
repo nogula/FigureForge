@@ -1,15 +1,11 @@
-
 import os
 import pickle
 import json
-from typing import Any
 
 from PySide6.QtWidgets import (
     QWidget,
     QMessageBox,
 )
-
-from PySide6 import QtCore
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -209,7 +205,7 @@ class FigureManager(QWidget):
         self.debug = not self.debug
         print(f"Debug mode: {self.debug}")
 
-    def get_value(self, obj, attr_path: str, index: None | int=None):
+    def get_value(self, obj, attr_path: str, index: None | int = None):
         """
         Gets the value of an attribute of an object.
 

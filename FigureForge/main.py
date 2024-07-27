@@ -1,6 +1,5 @@
 import os
 import sys
-import traceback
 
 from PySide6.QtWidgets import QApplication, QSplashScreen, QMessageBox
 from PySide6.QtGui import QPixmap
@@ -10,7 +9,13 @@ from FigureForge.gui import MainWindow
 from FigureForge.__init__ import CURRENT_DIR
 
 
-def create_splash():
+def create_splash() -> QSplashScreen:
+    """
+    Creates and displays a splash screen with a loading message.
+
+    Returns:
+        QSplashScreen: The created splash screen.
+    """
     pixmap = QPixmap(os.path.join(CURRENT_DIR, "resources", "assets", "splash.png"))
     splash = QSplashScreen(pixmap)
     splash.showMessage("Loading FigureForge...", Qt.AlignBottom | Qt.AlignLeft)
@@ -18,27 +23,19 @@ def create_splash():
     return splash
 
 
-def main():
-    try:
-        app = QApplication(sys.argv)
-        splash = create_splash()
-        window = MainWindow(splash)
-        window.show()
-        splash.finish(window)
-        sys.exit(app.exec_())
-    except Exception as e:
-        error_message = str(e)
-        detailed_error = traceback.format_exc()
-        with open("error.log", "w") as f:
-            f.write(detailed_error)
-        print(detailed_error)
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
-        msg.setText("An error occurred")
-        msg.setInformativeText(error_message)
-        msg.setDetailedText(detailed_error)
-        msg.setWindowTitle("Error")
-        msg.exec_()
+def main() -> None:
+    """
+    Entry point of the application.
+
+    Initializes the application, creates a splash screen, creates the main window,
+    shows the window, finishes the splash screen, and starts the application event loop.
+    """
+    app = QApplication(sys.argv)
+    splash = create_splash()
+    window = MainWindow(splash)
+    window.show()
+    splash.finish(window)
+    sys.exit(app.exec_())
 
 
 if __name__ == "__main__":
