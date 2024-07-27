@@ -17,6 +17,12 @@
         "set": "set_layout_engine",
         "value_options": ["constrained", "compressed", "tight", "none"]
       },
+      "Size": {
+        "type": "tuple",
+        "types": ["float", "float"],
+        "get": "get_size_inches",
+        "set": "set_size_inches"
+      },
       "Title": {
         "type": "string",
         "get": "get_suptitle",
@@ -533,7 +539,6 @@
       },
       "Text Position": {
         "type": "tuple",
-        "columns": 2,
         "types": ["float", "float"],
         "get": "xyann",
         "set": "xyann"
