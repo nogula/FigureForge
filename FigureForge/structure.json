@@ -242,7 +242,7 @@
         "set": "set_usetex"
       },
       "Text": {
-        "type": "string",
+        "type": "multiline",
         "get": "get_text",
         "set": "set_text"
       },
@@ -467,7 +467,7 @@
         "set": "set_visible"
       },
       "Text": {
-        "type": "string",
+        "type": "multiline",
         "get": "get_text",
         "set": "set_text"
       },

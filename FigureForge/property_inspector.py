@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QComboBox,
     QDoubleSpinBox,
     QSpinBox,
+    QPlainTextEdit,
 )
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QColor
@@ -89,6 +90,13 @@ class PropertyInspector(QWidget):
                 lambda n=name, w=value_widget: self.on_value_changed(n, w)
             )
             self.content_layout.addWidget(value_widget, row, 2)
+        elif value_type == "multiline":
+            value_widget = QPlainTextEdit()
+            value_widget.setPlainText(value)
+            value_widget.textChanged.connect(
+                lambda n=name, w=value_widget: self.on_value_changed(n, w)
+            )
+            self.content_layout.addWidget(value_widget, row, 2)
         elif value_type == "choice":
             value_widget = QComboBox()
             value_widget.addItems(value_options)
@@ -150,6 +158,8 @@ class PropertyInspector(QWidget):
             value = widget.currentText()
         elif widget.__class__.__name__ == "QLineEdit":
             value = widget.text()
+        elif widget.__class__.__name__ == "QPlainTextEdit":
+            value = widget.toPlainText()
         elif widget.__class__.__name__ == "QDoubleSpinBox":
             value = widget.value()
         elif widget.__class__.__name__ == "ColorButton":
