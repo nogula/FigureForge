@@ -33,7 +33,7 @@ class Preferences:
             "plugin_requirements": os.path.join(
                 CURRENT_DIR, "plugins", "requirements.txt"
             ),
-            "theme": "dark",
+            "theme": "auto",
             "last_export_path": "",
         }
         self.preferences = self.load_preferences()
