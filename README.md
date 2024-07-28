@@ -20,7 +20,7 @@ A Python GUI application for interactive creation and editing of matplotlib figu
 3. Run the following command to install FigureForge:
 
     ```
-    pip install git+https://github.com/nogula/FigureForge.git
+    pip install FigureForge
     ```
     _You may need to uninstall FigureForge before upgrading._
 4. Start FigureForge from the terminal:
