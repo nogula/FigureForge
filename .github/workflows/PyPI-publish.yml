@@ -12,10 +12,14 @@ on: workflow_dispatch
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+        name: pypi
+        url: https://pypi.org/p/FigureForge
 
     steps:
     - uses: actions/checkout@v4
@@ -47,8 +51,11 @@ jobs:
       with:
         name: python-package-distributions
         path: dist/
-    - name: Publish package
-      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+    - name: Download all the dists
+      uses: actions/download-artifact@v3
       with:
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      
