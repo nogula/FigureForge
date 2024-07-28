@@ -5,6 +5,9 @@ description = ""
 authors = ["Noah Gula <noahrgula@gmail.com>"]
 readme = "README.md"
 license = "MIT"
+packages = [
+    { include = "FigureForge", from = "." }
+]
 
 [tool.poetry.dependencies]
 python = "<3.12,>=3.9"
