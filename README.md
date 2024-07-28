@@ -11,7 +11,7 @@ A Python GUI application for interactive creation and editing of matplotlib figu
 - [Save figures](htthttps://github.com/nogula/FigureForge/wiki/FAQ-&-Troubleshooting#how-does-figureforge-save-figure-data) to a pickle file for use in other Python projects or to share (and load figures from a pickle file, too!).
 - Use [custom plugins](https://github.com/nogula/FigureForge/wiki/Plugins) to automate figure styling.
 
-![](./FigureForge/resources/assets/demo.png)
+![](https://raw.githubusercontent.com/nogula/FigureForge/main/FigureForge/resources/assets/demo.png)
 
 ## Installation
 
