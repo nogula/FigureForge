@@ -21,6 +21,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Ensure correct project directory case
+      run: |
+        if [ -d "figureforge" ]; then
+          mv figureforge FigureForge
+        fi
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
