@@ -3,8 +3,10 @@ import os
 import subprocess
 import importlib
 import inspect
+from io import BytesIO
 
 from PySide6.QtWidgets import (
+    QApplication,
     QWidget,
     QSplitter,
     QFileDialog,
@@ -121,6 +123,14 @@ class MainWindow(QMainWindow):
         edit_menu.addAction(configure_gridspec_action)
 
         edit_menu.addSeparator()
+
+        copy_figure_action = QAction("Copy Figure", self)
+        copy_figure_action.triggered.connect(self.copy_figure)
+        copy_figure_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/copy_icon.png"))
+        )
+        copy_figure_action.setShortcut("Ctrl+C")
+        edit_menu.addAction(copy_figure_action)
 
         delete_item_action = QAction("Delete Item", self)
         delete_item_action.triggered.connect(self.delete_item)
@@ -536,3 +546,13 @@ class MainWindow(QMainWindow):
     def show_preferences_dialog(self):
         dialog = PreferencesDialog(self.preferences, self)
         dialog.exec_()
+
+    def copy_figure(self):
+        buf = BytesIO()
+        self.fm.figure.savefig(buf, format="png")
+        buf.seek(0)
+        image = QPixmap()
+        image.loadFromData(buf.getvalue(), "PNG")
+
+        clipboard = QApplication.clipboard()
+        clipboard.setPixmap(image)
