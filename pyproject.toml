@@ -1,12 +1,13 @@
 [tool.poetry]
 name = "FigureForge"
-version = "0.1.0-alpha"
+version = "0.1.0"
 description = ""
 authors = ["Noah Gula <noahrgula@gmail.com>"]
 readme = "README.md"
+license = "MIT"
 
 [tool.poetry.dependencies]
-python = "<3.13,>=3.9"
+python = "<3.12,>=3.9"
 numpy = "^2.0.0"
 pandas = "^2.2.2"
 matplotlib = "^3.9.1"
