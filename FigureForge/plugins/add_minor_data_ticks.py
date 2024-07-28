@@ -27,10 +27,12 @@ class AddMinorDataTicks:
             data = self.get_data(obj)
             obj.xaxis.set_minor_locator(FixedLocator(np.unique(data[0])))
             obj.yaxis.set_minor_locator(FixedLocator(np.unique(data[1])))
-                
+
         else:
             msg_failure = QMessageBox()
-            msg_failure.setText(f"Invalid object type: {obj.__class__.__name__}. Must be Axes or Axis.")
+            msg_failure.setText(
+                f"Invalid object type: {obj.__class__.__name__}. Must be Axes or Axis."
+            )
             msg_failure.setIcon(QMessageBox.Warning)
             msg_failure.exec()
             return
@@ -38,7 +40,7 @@ class AddMinorDataTicks:
     def get_data(self, ax):
         all_x = []
         all_y = []
-        
+
         for line in ax.get_lines():
             x_data, y_data = line.get_xdata(), line.get_ydata()
             all_x.extend(x_data)

@@ -23,7 +23,9 @@ class ReduceTickLimits:
                 self.update_ticks(axis, *axis.get_data_interval())
         else:
             msg_failure = QMessageBox()
-            msg_failure.setText(f"Invalid object type: {obj.__class__.__name__}. Must be Axes or Axis.")
+            msg_failure.setText(
+                f"Invalid object type: {obj.__class__.__name__}. Must be Axes or Axis."
+            )
             msg_failure.setIcon(QMessageBox.Warning)
             msg_failure.exec()
             return
@@ -33,8 +35,8 @@ class ReduceTickLimits:
         tick_spacing = abs(ticks[1] - ticks[0])
         ticks[0] = min_val
         ticks[-1] = max_val
-        if abs(ticks[1] - ticks[0]) < tick_spacing/3:
+        if abs(ticks[1] - ticks[0]) < tick_spacing / 3:
             ticks = np.delete(ticks, 1)
-        if abs(ticks[-1] - ticks[-2]) < tick_spacing/3:
+        if abs(ticks[-1] - ticks[-2]) < tick_spacing / 3:
             ticks = np.delete(ticks, -2)
         axis.set_ticks(ticks)
