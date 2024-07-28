@@ -114,15 +114,6 @@ class MainWindow(QMainWindow):
         file_menu.addAction(quit_action)
 
         edit_menu = menubar.addMenu("Edit")
-        configure_gridspec_action = QAction("Configure Gridspec", self)
-        configure_gridspec_action.triggered.connect(self.configure_gridspec)
-        configure_gridspec_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/gridspec_icon.png"))
-        )
-        configure_gridspec_action.setShortcut("Ctrl+G")
-        edit_menu.addAction(configure_gridspec_action)
-
-        edit_menu.addSeparator()
 
         copy_figure_action = QAction("Copy Figure", self)
         copy_figure_action.triggered.connect(self.copy_figure)
