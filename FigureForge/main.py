@@ -42,9 +42,10 @@ def main(figure: Figure | None = None) -> Figure:
     splash.finish(window)
 
     figure = None
+
     def get_figure():
         figure = window.fm.figure
-    
+
     app.aboutToQuit.connect(get_figure)
     app.exec()
 
