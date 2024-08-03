@@ -5,6 +5,8 @@ from PySide6.QtWidgets import QApplication, QSplashScreen, QMessageBox
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 
+from matplotlib.figure import Figure
+
 from FigureForge.gui import MainWindow
 from FigureForge.__init__ import CURRENT_DIR
 
@@ -23,19 +25,28 @@ def create_splash() -> QSplashScreen:
     return splash
 
 
-def main() -> None:
+def main(figure: Figure | None = None) -> Figure:
     """
     Entry point of the application.
 
     Initializes the application, creates a splash screen, creates the main window,
     shows the window, finishes the splash screen, and starts the application event loop.
     """
-    app = QApplication(sys.argv)
+    if not QApplication.instance():
+        app = QApplication(sys.argv)
+    else:
+        app = QApplication.instance()
     splash = create_splash()
-    window = MainWindow(splash)
+    window = MainWindow(splash, figure)
     window.show()
     splash.finish(window)
-    sys.exit(app.exec_())
+
+    figure = None
+    def get_figure():
+        figure = window.fm.figure
+    
+    app.aboutToQuit.connect(get_figure)
+    app.exec()
 
 
 if __name__ == "__main__":

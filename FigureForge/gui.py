@@ -36,7 +36,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, splash):
+    def __init__(self, splash, figure):
         super().__init__()
         self.setWindowTitle("FigureForge")
         self.setWindowIcon(
@@ -50,7 +50,7 @@ class MainWindow(QMainWindow):
         qdarktheme.setup_theme(self.preferences.get("theme"))
 
         self.create_menus()
-        self.init_ui()
+        self.init_ui(figure)
 
         self.show()
 
@@ -193,13 +193,13 @@ class MainWindow(QMainWindow):
         )
         help_menu.addAction(bug_action)
 
-    def init_ui(self):
+    def init_ui(self, figure):
         """Initializes the main window."""
         self.splash.showMessage("Initializing UI...", Qt.AlignBottom | Qt.AlignLeft)
         splitter = QSplitter(Qt.Horizontal)
         splitter.setContentsMargins(0, 0, 0, 0)
 
-        self.fm = FigureManager(self.preferences, self.setWindowTitle)
+        self.fm = FigureManager(self.preferences, self.setWindowTitle, figure)
         self.fe = self.fm.fe
         self.pi = self.fm.pi
 

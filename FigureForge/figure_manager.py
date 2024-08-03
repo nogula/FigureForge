@@ -35,7 +35,7 @@ class FigureManager(QWidget):
         propertyChanged: A signal emitted when a property is changed in the PropertyInspector.
     """
 
-    def __init__(self, preferences, set_window_title_method) -> None:
+    def __init__(self, preferences, set_window_title_method, figure) -> None:
         """
         Initializes a new instance of the FigureManager class.
         """
@@ -54,9 +54,11 @@ class FigureManager(QWidget):
         self.unsaved_changes = False
         self.file_name = None
 
-        # Only when GUI is started, create the default figure
         self.new_figure()
-        self.figure.__dict__.update(create_default_figure().__dict__)
+        if figure is not None:
+            self.figure.__dict__.update(figure.__dict__)
+        else:
+            self.figure.__dict__.update(create_default_figure().__dict__)
         self.canvas.draw()
         self.fe.build_tree(self.figure)
 

@@ -290,7 +290,7 @@ class AddAnnotationsDialog(QDialog):
                 # "xytext": (self.xtext.value(), self.ytext.value()),
                 "textcoords": self.xytextcoords.currentText(),
             }
-        
+
     def arrow_changed(self):
         if self.use_arrow.isChecked():
             self.arrowstyle.setEnabled(True)
