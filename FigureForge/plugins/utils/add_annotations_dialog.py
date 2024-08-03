@@ -172,7 +172,6 @@ class AddAnnotationsDialog(QDialog):
 
     def get_annotation(self):
         arrow_params = {
-            "-": [],
             "->": [
                 "head_length",
                 "head_width",
