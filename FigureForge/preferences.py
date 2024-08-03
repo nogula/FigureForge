@@ -35,6 +35,7 @@ class Preferences:
             ),
             "theme": "auto",
             "last_export_path": "",
+            "debug": False,
         }
         self.preferences = self.load_preferences()
 
@@ -108,6 +109,10 @@ class PreferencesDialog(QDialog):
         theme_layout.addWidget(self.theme_combo)
         form_layout.addRow(QLabel("Theme:"), theme_layout)
 
+        self.debug_checkbox = QCheckBox(self)
+        self.debug_checkbox.setChecked(self.preferences.get("debug"))
+        form_layout.addRow(QLabel("Debug Mode:"), self.debug_checkbox)
+
         button_box = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
         button_box.accepted.connect(self.save_preferences)
         button_box.rejected.connect(self.reject)
@@ -135,4 +140,5 @@ class PreferencesDialog(QDialog):
             "plugin_requirements", self.plugin_requirements_edit.text()
         )
         self.preferences.set("theme", self.theme_combo.currentText())
+        self.preferences.set("debug", self.debug_checkbox.isChecked())
         self.accept()

@@ -21,7 +21,6 @@ class FigureManager(QWidget):
     A class that manages the creation, loading, and modification of figures.
 
     Attributes:
-        debug (bool): A flag indicating whether debug mode is enabled.
         pi (PropertyInspector): An instance of the PropertyInspector class.
         fe (FigureExplorer): An instance of the FigureExplorer class.
         figure (Figure): The matplotlib Figure object.
@@ -42,8 +41,6 @@ class FigureManager(QWidget):
         super().__init__()
         self.preferences = preferences
         self.update_window_title = set_window_title_method
-
-        self.debug = False
 
         self.pi = PropertyInspector()
         self.fe = FigureExplorer()
@@ -77,7 +74,7 @@ class FigureManager(QWidget):
         json_file = os.path.join(CURRENT_DIR, "structure.json")
         with open(json_file) as file:
             self.structure = json.load(file)
-        if self.debug:
+        if self.preferences.get("debug"):
             print(f"Loaded structure: {json_file}")
 
     def load_figure(self, file_name) -> None:
@@ -96,7 +93,7 @@ class FigureManager(QWidget):
         self.update_window_title(f"FigureForge - {file_name}")
         self.fe.build_tree(self.figure)
         self.pi.clear_properties()
-        if self.debug:
+        if self.preferences.get("debug"):
             print(f"Loaded figure from {file_name}")
 
     def save_figure(self, file_name) -> None:
@@ -110,7 +107,7 @@ class FigureManager(QWidget):
             pickle.dump(self.figure, file)
         self.unsaved_changes = False
         self.update_window_title(f"FigureForge - {file_name}")
-        if self.debug:
+        if self.preferences.get("debug"):
             print(f"Saved figure to {file_name}")
 
     def new_figure(self) -> None:
@@ -123,7 +120,7 @@ class FigureManager(QWidget):
         self.update_window_title(f"FigureForge - New Figure")
         self.canvas.draw()
         self.fe.build_tree(self.figure)
-        if self.debug:
+        if self.preferences.get("debug"):
             print("Created new figure")
 
     def on_item_selected(self, obj) -> None:
@@ -150,7 +147,7 @@ class FigureManager(QWidget):
 
             self.pi.add_property(property_name, value_type, value, value_options, types)
 
-        if self.debug:
+        if self.preferences.get("debug"):
             print(f"Selected {obj.__class__.__name__}")
 
     def on_property_changed(self, property_name: str, value) -> None:
@@ -175,7 +172,7 @@ class FigureManager(QWidget):
         self.unsaved_changes = True
         self.update_window_title(f"FigureForge - {self.file_name} *Unsaved changes")
 
-        if self.debug:
+        if self.preferences.get("debug"):
             print(f"Changed {property_name} to {value} on {obj_class}")
 
     def delete_obj(self) -> None:
@@ -193,7 +190,7 @@ class FigureManager(QWidget):
         self.fe.build_tree(self.figure)
         self.selected_obj = None
 
-        if self.debug:
+        if self.preferences.get("debug"):
             print(f"Attempting to delete {self.selected_obj}")
 
     def attempt_delete(self, obj) -> None:
@@ -207,13 +204,6 @@ class FigureManager(QWidget):
             obj.remove()
         except NotImplementedError:
             QMessageBox.critical(self, "Error", "Cannot delete this item.")
-
-    def toggle_debug_mode(self) -> None:
-        """
-        Toggles the debug mode.
-        """
-        self.debug = not self.debug
-        print(f"Debug mode: {self.debug}")
 
     def get_value(self, obj, attr_path: str, index: None | int = None):
         """
@@ -240,7 +230,7 @@ class FigureManager(QWidget):
             try:
                 value = value[index]
             except TypeError:
-                if self.debug:
+                if self.preferences.get("debug"):
                     print(f"Indexing failed on {value} for {obj}")
                 value = value
         return value
@@ -261,15 +251,15 @@ class FigureManager(QWidget):
             if callable(obj):
                 obj = obj()
         if type(value) == dict:
-            if self.debug:
+            if self.preferences.get("debug"):
                 print(f"Calling {attr_path}({value}) on {obj}")
             getattr(obj, attrs[-1])(**value)
         elif callable(getattr(obj, attrs[-1])):
-            if self.debug:
+            if self.preferences.get("debug"):
                 print(f"Calling {attr_path}({value}) on {obj}")
             getattr(obj, attrs[-1])(value)
         else:
-            if self.debug:
+            if self.preferences.get("debug"):
                 print(f"Setting {attr_path} to {value} on {obj}")
             setattr(obj, attrs[-1], value)
 
