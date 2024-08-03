@@ -136,15 +136,6 @@ class MainWindow(QMainWindow):
         reload_structure_action.setShortcut("Ctrl+R")
         edit_menu.addAction(reload_structure_action)
 
-        debug_mode_action = QAction("Debug Mode", self)
-        debug_mode_action.setCheckable(True)
-        debug_mode_action.triggered.connect(self.toggle_debug_mode)
-        debug_mode_action.setShortcut("Ctrl+D")
-        debug_mode_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/debug_icon.png"))
-        )
-        edit_menu.addAction(debug_mode_action)
-
         preferences_action = QAction("Preferences", self)
         preferences_action.triggered.connect(self.show_preferences_dialog)
         preferences_action.setIcon(
@@ -314,7 +305,7 @@ class MainWindow(QMainWindow):
         dialog = ExportFigureDialog(self.preferences, self.fm.figure)
         dialog.exec()
         self.fm.canvas.draw()
-        if self.fm.debug:
+        if self.preferences.get("debug"):
             print("Exported figure")
 
     def quit(self):
@@ -530,9 +521,6 @@ class MainWindow(QMainWindow):
     def reload_json_structure(self):
         self.fm.load_json_structure()
         print("Reloaded JSON structure.")
-
-    def toggle_debug_mode(self):
-        self.fm.toggle_debug_mode()
 
     def show_preferences_dialog(self):
         dialog = PreferencesDialog(self.preferences, self)
