@@ -286,7 +286,7 @@ class AddAnnotationsDialog(QDialog):
             return {
                 "text": self.text.text(),
                 "xy": (self.x.value(), self.y.value()),
-                "xycoords": self.xycoords.currentText(),
-                "xytext": (self.xtext.value(), self.ytext.value()),
+                # "xycoords": self.xycoords.currentText(),
+                # "xytext": (self.xtext.value(), self.ytext.value()),
                 "textcoords": self.xytextcoords.currentText(),
             }
