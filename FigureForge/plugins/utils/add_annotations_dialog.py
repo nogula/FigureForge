@@ -62,6 +62,7 @@ class AddAnnotationsDialog(QDialog):
 
         self.use_arrow = QCheckBox("Use Arrow")
         self.use_arrow.setChecked(True)
+        self.use_arrow.stateChanged.connect(self.arrow_changed)
         layout.addRow(self.use_arrow)
 
         arrowprops_layout = QFormLayout()
@@ -171,7 +172,6 @@ class AddAnnotationsDialog(QDialog):
 
     def get_annotation(self):
         arrow_params = {
-            "-": [],
             "->": [
                 "head_length",
                 "head_width",
@@ -286,7 +286,37 @@ class AddAnnotationsDialog(QDialog):
             return {
                 "text": self.text.text(),
                 "xy": (self.x.value(), self.y.value()),
-                "xycoords": self.xycoords.currentText(),
-                "xytext": (self.xtext.value(), self.ytext.value()),
+                # "xycoords": self.xycoords.currentText(),
+                # "xytext": (self.xtext.value(), self.ytext.value()),
                 "textcoords": self.xytextcoords.currentText(),
             }
+        
+    def arrow_changed(self):
+        if self.use_arrow.isChecked():
+            self.arrowstyle.setEnabled(True)
+            self.connectionstyle.setEnabled(True)
+            self.shrinkA.setEnabled(True)
+            self.shrinkB.setEnabled(True)
+            self.linewidth.setEnabled(True)
+            self.color.setEnabled(True)
+            self.xtext.setEnabled(True)
+            self.ytext.setEnabled(True)
+            self.xytextcoords.setEnabled(True)
+            for widget in self.arrowattrs_widgets.values():
+                widget.setEnabled(True)
+            for widget in self.connectionattrs_widgets.values():
+                widget.setEnabled(True)
+        else:
+            self.arrowstyle.setEnabled(False)
+            self.connectionstyle.setEnabled(False)
+            self.shrinkA.setEnabled(False)
+            self.shrinkB.setEnabled(False)
+            self.linewidth.setEnabled(False)
+            self.color.setEnabled(False)
+            self.xtext.setEnabled(False)
+            self.ytext.setEnabled(False)
+            self.xytextcoords.setEnabled(False)
+            for widget in self.arrowattrs_widgets.values():
+                widget.setEnabled(False)
+            for widget in self.connectionattrs_widgets.values():
+                widget.setEnabled(False)
