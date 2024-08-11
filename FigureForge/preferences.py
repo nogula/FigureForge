@@ -1,6 +1,6 @@
 import os
 import json
-from appdirs import user_config_dir, user_data_dir
+from appdirs import user_config_dir
 
 from PySide6.QtWidgets import (
     QDialog,
@@ -36,6 +36,7 @@ class Preferences:
             "theme": "auto",
             "last_export_path": "",
             "debug": False,
+            "show_welcome": True,
         }
         self.preferences = self.load_preferences()
 
@@ -52,9 +53,9 @@ class Preferences:
             json.dump(self.preferences, file, indent=4)
 
     def create_default_preferences(self):
-        print("Creating default preferences.")
         self.preferences = self.defaults.copy()
         self.save_preferences()
+        print(f"Created default preferences file at {self.config_file}")
 
     def get(self, key):
         return self.preferences.get(key, self.defaults.get(key))
@@ -64,10 +65,6 @@ class Preferences:
         if key == "theme":
             qdarktheme.setup_theme(value)
         self.save_preferences()
-
-    def print_config_path(self):
-        print(f"Config file path: {self.config_file}")
-        return self.config_file
 
 
 class PreferencesDialog(QDialog):
