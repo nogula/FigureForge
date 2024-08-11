@@ -1,9 +1,11 @@
+from ensurepip import bootstrap
 import sys
 import os
 import subprocess
 import importlib
 import inspect
 from io import BytesIO
+from appdirs import user_config_dir
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -19,13 +21,13 @@ from PySide6.QtWidgets import (
     QDialog,
     QGridLayout,
     QMenu,
+    QCheckBox,
 )
 from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 
 import qdarktheme
 
-from FigureForge import preferences
 from FigureForge.__init__ import __version__, CURRENT_DIR
 from FigureForge.figure_manager import FigureManager
 from FigureForge.bug_report_dialog import BugReportDialog
@@ -54,6 +56,10 @@ class MainWindow(QMainWindow):
         self.init_ui(figure)
 
         self.show()
+        self.show_welcome_dialog()
+
+    def flag(self):
+        self.created_default_preferences = True
 
     def create_menus(self):
         """Creates the menubar at the top of the main window."""
@@ -536,3 +542,54 @@ class MainWindow(QMainWindow):
 
         clipboard = QApplication.clipboard()
         clipboard.setPixmap(image)
+        buf.close()
+
+    def show_welcome_dialog(self):
+        if not self.preferences.get("show_welcome"):
+            return
+
+        dialog = QDialog()
+        dialog.setWindowTitle(f"Welcome to FigureForge {__version__}")
+        dialog.setWindowIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
+        )
+        layout = QVBoxLayout()
+
+        logo = QLabel()
+        logo.setPixmap(
+            QPixmap(os.path.join(CURRENT_DIR, "resources/assets/logo_color_text.png"))
+        )
+        logo.setScaledContents(True)
+        logo.setFixedSize(QSize(100, 100))
+
+        layout.addWidget(logo, alignment=Qt.AlignCenter)
+
+        description = QLabel(
+            "FigureForge is a GUI tool for creating and editing matplotlib figures."
+        )
+        layout.addWidget(description, alignment=Qt.AlignLeft)
+
+        documentation_link = QLabel(
+            'For more information, please visit the <a href="https://github.com/nogula/FigureForge/wiki">documentation</a>.'
+        )
+        documentation_link.setOpenExternalLinks(True)
+        layout.addWidget(documentation_link, alignment=Qt.AlignLeft)
+
+        bottom_row = QHBoxLayout()
+
+        display_at_startup = QCheckBox("Display this dialog at startup")
+        display_at_startup.setChecked(True)
+        bottom_row.addWidget(display_at_startup)
+        bottom_row.addStretch()
+        close_button = QPushButton("Close")
+        close_button.clicked.connect(dialog.close)
+        bottom_row.addWidget(close_button)
+
+        layout.addLayout(bottom_row)
+
+        dialog.setLayout(layout)
+        dialog.exec()
+        if display_at_startup.isChecked():
+            self.preferences.set("show_welcome", True)
+        else:
+            self.preferences.set("show_welcome", False)
