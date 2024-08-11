@@ -25,6 +25,7 @@ from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 
 import qdarktheme
 
+from FigureForge import preferences
 from FigureForge.__init__ import __version__, CURRENT_DIR
 from FigureForge.figure_manager import FigureManager
 from FigureForge.bug_report_dialog import BugReportDialog
@@ -321,7 +322,7 @@ class MainWindow(QMainWindow):
             self.close()
 
     def open_plugins_folder(self):
-        path = os.path.join(CURRENT_DIR, "plugins")
+        path = self.preferences.get("plugin_directory")
         QDesktopServices.openUrl(QUrl.fromLocalFile(path))
 
     def plugins_documentation(self):
