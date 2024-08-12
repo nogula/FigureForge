@@ -26,6 +26,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 
+from matplotlib.pylab import f
 import qdarktheme
 
 from FigureForge.__init__ import __version__, CURRENT_DIR
@@ -83,6 +84,11 @@ class MainWindow(QMainWindow):
         open_action.setShortcut("Ctrl+O")
         open_action.triggered.connect(self.open_file)
         file_menu.addAction(open_action)
+
+        self.open_recent_menu = QMenu("Open Recent", self)
+        file_menu.addMenu(self.open_recent_menu)
+        self.get_recent_files()
+    
 
         save_action = QAction("Save", self)
         save_action.setIcon(
@@ -298,6 +304,7 @@ class MainWindow(QMainWindow):
             self.save_as_file()
         else:
             self.fm.save_figure(self.fm.file_name)
+        self.update_recent_files()
 
     def save_as_file(self):
         options = QFileDialog.Options()
@@ -307,6 +314,7 @@ class MainWindow(QMainWindow):
         if file_name:
             self.fm.file_name = file_name
             self.fm.save_figure(self.fm.file_name)
+        self.update_recent_files()
 
     def export_figure(self):
         dialog = ExportFigureDialog(self.preferences, self.fm.figure)
@@ -593,3 +601,35 @@ class MainWindow(QMainWindow):
             self.preferences.set("show_welcome", True)
         else:
             self.preferences.set("show_welcome", False)
+
+    def get_recent_files(self):
+        self.open_recent_menu.clear()
+        for file in self.preferences.get("recent_files"):
+            action = QAction(file, self)
+            action.triggered.connect(lambda checked, file=file: self.open_recent_file(file))
+            self.open_recent_menu.addAction(action)
+
+    def open_recent_file(self, file):
+        if self.fm.unsaved_changes:
+            res = self.save_work_dialog()
+            if res == QMessageBox.Save:
+                self.save_file()
+            elif res == QMessageBox.Discard:
+                pass
+            elif res == QMessageBox.Cancel:
+                return
+        self.fm.file_name = file
+        self.fm.load_figure(self.fm.file_name)
+
+    def update_recent_files(self):
+        recent_files = self.preferences.get("recent_files")
+        if self.fm.file_name in recent_files:
+            recent_files.remove(self.fm.file_name)
+        else:
+            if len(recent_files) >= 5:
+                recent_files.pop()
+        recent_files.insert(0, self.fm.file_name)
+        self.preferences.set("recent_files", recent_files)
+        self.get_recent_files()
+
+        print(f"Updated recent files: {recent_files}")

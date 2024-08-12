@@ -93,6 +93,7 @@ class FigureManager(QWidget):
         self.update_window_title(f"FigureForge - {file_name}")
         self.fe.build_tree(self.figure)
         self.pi.clear_properties()
+        self.file_name = file_name
         if self.preferences.get("debug"):
             print(f"Loaded figure from {file_name}")
 

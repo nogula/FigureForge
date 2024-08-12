@@ -37,6 +37,7 @@ class Preferences:
             "last_export_path": "",
             "debug": False,
             "show_welcome": True,
+            "recent_files": [],
         }
         self.preferences = self.load_preferences()
 
