@@ -34,7 +34,7 @@ class FigureManager(QWidget):
         propertyChanged: A signal emitted when a property is changed in the PropertyInspector.
     """
 
-    def __init__(self, preferences, set_window_title_method, figure) -> None:
+    def __init__(self, preferences, set_window_title_method, figure=None) -> None:
         """
         Initializes a new instance of the FigureManager class.
         """
@@ -61,6 +61,7 @@ class FigureManager(QWidget):
 
         # Connect signals to slots
         self.fe.itemSelected.connect(self.on_item_selected)
+        self.fe.refreshTree.connect(lambda: self.fe.build_tree(self.figure))
         self.pi.propertyChanged.connect(self.on_property_changed)
         self.selected_obj = None
 

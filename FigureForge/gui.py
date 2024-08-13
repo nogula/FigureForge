@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QMenu,
     QCheckBox,
+    QTabWidget,
 )
 from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
@@ -34,9 +35,6 @@ from FigureForge.figure_manager import FigureManager
 from FigureForge.bug_report_dialog import BugReportDialog
 from FigureForge.export_figure_dialog import ExportFigureDialog
 from FigureForge.preferences import Preferences, PreferencesDialog
-
-
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class MainWindow(QMainWindow):
@@ -58,9 +56,6 @@ class MainWindow(QMainWindow):
 
         self.show()
         self.show_welcome_dialog()
-
-    def flag(self):
-        self.created_default_preferences = True
 
     def create_menus(self):
         """Creates the menubar at the top of the main window."""
@@ -88,7 +83,6 @@ class MainWindow(QMainWindow):
         self.open_recent_menu = QMenu("Open Recent", self)
         file_menu.addMenu(self.open_recent_menu)
         self.get_recent_files()
-    
 
         save_action = QAction("Save", self)
         save_action.setIcon(
@@ -204,55 +198,28 @@ class MainWindow(QMainWindow):
         splitter.setContentsMargins(0, 0, 0, 0)
 
         self.fm = FigureManager(self.preferences, self.setWindowTitle, figure)
-        self.fe = self.fm.fe
-        self.pi = self.fm.pi
-
-        left_splitter = QSplitter(Qt.Vertical)
-        left_splitter.setContentsMargins(0, 0, 5, 0)
-
-        fe_header_layout = QHBoxLayout()
-        fe_header_layout.setContentsMargins(0, 0, 0, 0)
-        fe_header_widget = QWidget()
-
-        fe_header_label = QLabel("Figure Explorer")
-
-        refresh_button = QPushButton("Refresh")
-        refresh_button.clicked.connect(self.refresh_display)
-        refresh_button.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/refresh_icon.png"))
-        )
-
-        fe_header_layout.addWidget(fe_header_label)
-        fe_header_layout.addStretch()
-        fe_header_layout.addWidget(refresh_button)
-        fe_header_widget.setLayout(fe_header_layout)
-
-        fe_layout = QVBoxLayout()
-        fe_layout.setContentsMargins(0, 0, 0, 5)
-        fe_widget = QWidget()
-        fe_layout.addWidget(fe_header_widget)
-        fe_layout.addWidget(self.fe)
-
-        fe_widget.setLayout(fe_layout)
-        left_splitter.addWidget(fe_widget)
-
-        pi_layout = QVBoxLayout()
-        pi_layout.setContentsMargins(0, 5, 5, 0)
-        pi_header_widget = QLabel("Property Inspector")
-        pi_layout.addWidget(pi_header_widget)
-        pi_layout.addWidget(self.pi)
-        pi_widget = QWidget()
-        pi_widget.setLayout(pi_layout)
-
-        left_splitter.addWidget(pi_widget)
-
-        splitter.addWidget(left_splitter)
-
+        self.figure_managers = [self.fm]
+        self.tab_widget = QTabWidget(tabsClosable=True)
+        self.tab_widget.currentChanged.connect(self.change_tab)
+        self.tab_widget.tabCloseRequested.connect(self.close_tab)
         figure_widget = QWidget()
         figure_layout = QVBoxLayout(figure_widget)
         figure_layout.setContentsMargins(5, 0, 0, 0)
         figure_layout.addWidget(self.fm.canvas)
-        splitter.addWidget(figure_widget)
+        self.tab_widget.addTab(figure_widget, "New Figure")
+
+        self.fe = self.fm.fe
+        self.pi = self.fm.pi
+        self.figure_explorers = [self.fe]
+        self.property_inspectors = [self.pi]
+
+        self.left_splitter = QSplitter(Qt.Vertical)
+        self.left_splitter.setContentsMargins(0, 0, 5, 0)
+        self.left_splitter.addWidget(self.fe)
+
+        self.left_splitter.addWidget(self.pi)
+        splitter.addWidget(self.left_splitter)
+        splitter.addWidget(self.tab_widget)
 
         main_widget = QWidget()
         main_layout = QVBoxLayout(main_widget)
@@ -272,15 +239,12 @@ class MainWindow(QMainWindow):
         return button
 
     def new_file(self):
-        if self.fm.unsaved_changes:
-            res = self.save_work_dialog()
-            if res == QMessageBox.Save:
-                self.save_file()
-            elif res == QMessageBox.Discard:
-                pass
-            elif res == QMessageBox.Cancel:
-                return
-        self.fm.new_figure()
+        new_fm = FigureManager(self.preferences, self.setWindowTitle, None)
+        self.figure_managers.append(new_fm)
+        self.figure_explorers.append(new_fm.fe)
+        self.property_inspectors.append(new_fm.pi)
+
+        self.tab_widget.addTab(new_fm.canvas, "New Figure")
 
     def open_file(self):
         if self.fm.unsaved_changes:
@@ -298,6 +262,8 @@ class MainWindow(QMainWindow):
         if file_name:
             self.fm.file_name = file_name
             self.fm.load_figure(self.fm.file_name)
+            tab_title = self.fm.file_name.split("/")[-1]
+            self.tab_widget.setTabText(self.tab_widget.currentIndex(), tab_title)
 
     def save_file(self):
         if self.fm.file_name is None:
@@ -305,6 +271,8 @@ class MainWindow(QMainWindow):
         else:
             self.fm.save_figure(self.fm.file_name)
         self.update_recent_files()
+        tab_title = self.fm.file_name.split("/")[-1]
+        self.tab_widget.setTabText(self.tab_widget.currentIndex(), tab_title)
 
     def save_as_file(self):
         options = QFileDialog.Options()
@@ -516,13 +484,6 @@ class MainWindow(QMainWindow):
     def delete_item(self):
         self.fm.delete_obj()
 
-    def configure_gridspec(self):
-        raise NotImplementedError
-
-    def refresh_display(self):
-        self.fm.canvas.draw()
-        self.fm.fe.build_tree(self.fm.figure)
-
     def reload_plugins(self):
         actions = self.plugin_menu.actions()
         total_actions = len(actions)
@@ -606,7 +567,9 @@ class MainWindow(QMainWindow):
         self.open_recent_menu.clear()
         for file in self.preferences.get("recent_files"):
             action = QAction(file, self)
-            action.triggered.connect(lambda checked, file=file: self.open_recent_file(file))
+            action.triggered.connect(
+                lambda checked, file=file: self.open_recent_file(file)
+            )
             self.open_recent_menu.addAction(action)
 
     def open_recent_file(self, file):
@@ -620,6 +583,8 @@ class MainWindow(QMainWindow):
                 return
         self.fm.file_name = file
         self.fm.load_figure(self.fm.file_name)
+        tab_title = self.fm.file_name.split("/")[-1]
+        self.tab_widget.setTabText(self.tab_widget.currentIndex(), tab_title)
 
     def update_recent_files(self):
         recent_files = self.preferences.get("recent_files")
@@ -633,3 +598,22 @@ class MainWindow(QMainWindow):
         self.get_recent_files()
 
         print(f"Updated recent files: {recent_files}")
+
+    def change_tab(self, index):
+        self.fm = self.figure_managers[index]
+        self.fe = self.fm.fe
+        self.pi = self.fm.pi
+        self.left_splitter.replaceWidget(0, self.fe)
+        self.left_splitter.replaceWidget(1, self.pi)
+
+    def close_tab(self, index):
+        if self.figure_managers[index].unsaved_changes:
+            res = self.save_work_dialog()
+            if res == QMessageBox.Save:
+                self.save_file()
+            elif res == QMessageBox.Discard:
+                pass
+            elif res == QMessageBox.Cancel:
+                return
+        self.figure_managers.pop(index)
+        self.tab_widget.removeTab(index)
