@@ -1,14 +1,13 @@
 from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
-    QLabel,
-    QDoubleSpinBox,
     QSpinBox,
-    QComboBox,
     QLineEdit,
     QCheckBox,
 )
 from PySide6.QtCore import Signal
+
+from FigureForge.custom_spinbox import SpinBox
 
 
 class TupleProperty(QWidget):
@@ -32,7 +31,7 @@ class TupleProperty(QWidget):
         self.widgets = []
         for i in range(self.columns):
             if self.types[i] == "float":
-                widget = QDoubleSpinBox()
+                widget = SpinBox()
                 widget.setRange(-1e6, 1e6)
                 widget.valueChanged.connect(self.valueChanged.emit)
             elif self.types[i] == "int":

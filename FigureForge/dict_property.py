@@ -2,17 +2,15 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QLabel,
-    QDoubleSpinBox,
     QSpinBox,
-    QComboBox,
     QLineEdit,
     QCheckBox,
 )
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Signal
 
-from FigureForge.tuple_property import TupleProperty
 from FigureForge.color_button import ColorButton
+from FigureForge.custom_spinbox import SpinBox
 
 
 class DictProperty(QWidget):
@@ -35,8 +33,7 @@ class DictProperty(QWidget):
         for k in self.types:
             label = QLabel(k)
             if self.types[k] == "float":
-                widget = QDoubleSpinBox()
-                widget.setRange(-1e6, 1e6)
+                widget = SpinBox()
                 widget.valueChanged.connect(self.valueChanged.emit)
             elif self.types[k] == "int":
                 widget = QSpinBox()

@@ -8,7 +8,6 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QLineEdit,
     QComboBox,
-    QDoubleSpinBox,
     QSpinBox,
     QPlainTextEdit,
 )
@@ -17,6 +16,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt
 
 from FigureForge.color_button import ColorButton
+from FigureForge.custom_spinbox import SpinBox
 from FigureForge.tuple_property import TupleProperty
 from FigureForge.dict_property import DictProperty
 import matplotlib.colors as mcolors
@@ -116,9 +116,7 @@ class PropertyInspector(QWidget):
             )
             self.content_layout.addWidget(value_widget, row, 2)
         elif value_type == "float":
-            value_widget = QDoubleSpinBox()
-            value_widget.setMinimum(-999999999)
-            value_widget.setMaximum(999999999)
+            value_widget = SpinBox()
             try:
                 value_widget.setValue(value)
             except TypeError:
@@ -161,7 +159,7 @@ class PropertyInspector(QWidget):
             value = widget.text()
         elif widget.__class__.__name__ == "QPlainTextEdit":
             value = widget.toPlainText()
-        elif widget.__class__.__name__ == "QDoubleSpinBox":
+        elif widget.__class__.__name__ == "SpinBox":
             value = widget.value()
         elif widget.__class__.__name__ == "ColorButton":
             value = widget.color.getRgbF()
