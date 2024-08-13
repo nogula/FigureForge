@@ -14,13 +14,13 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QFormLayout,
     QCheckBox,
-    QDoubleSpinBox,
 )
 from PySide6.QtGui import QIcon
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from FigureForge.__init__ import CURRENT_DIR
+from FigureForge.custom_spinbox import SpinBox
 
 
 class ExportFigureDialog(QDialog):
@@ -60,10 +60,10 @@ class ExportFigureDialog(QDialog):
         self.dpi_spinbox.valueChanged.connect(self.dpi_changed)
         form_layout.addRow(QLabel("DPI:"), self.dpi_spinbox)
 
-        self.width_edit = QDoubleSpinBox()
+        self.width_edit = SpinBox()
         self.width_edit.setValue(self.figure.get_size_inches()[0])
         self.width_edit.valueChanged.connect(self.size_changed)
-        self.height_edit = QDoubleSpinBox()
+        self.height_edit = SpinBox()
         self.height_edit.setValue(self.figure.get_size_inches()[1])
         self.height_edit.valueChanged.connect(self.size_changed)
         size_layout = QHBoxLayout()
