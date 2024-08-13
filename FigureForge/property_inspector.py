@@ -31,8 +31,9 @@ class PropertyInspector(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.layout = QVBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(QLabel("Property Inspector"))
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
 
@@ -45,9 +46,9 @@ class PropertyInspector(QWidget):
         self.content_layout.setAlignment(Qt.AlignTop)
         self.content_widget.setLayout(self.content_layout)
 
-        self.layout.addWidget(self.scroll_area)
+        layout.addWidget(self.scroll_area)
 
-        self.setLayout(self.layout)
+        self.setLayout(layout)
 
         property_label = QLabel("Property")
         font = property_label.font()
