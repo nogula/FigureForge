@@ -625,4 +625,4 @@ class MainWindow(QMainWindow):
                 elif res == QMessageBox.Cancel:
                     event.ignore()
                     return
-        event.accept()         
+        event.accept()

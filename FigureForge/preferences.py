@@ -65,13 +65,14 @@ class Preferences:
             for key in self.preferences:
                 if key in previous_preferences:
                     self.preferences[key] = previous_preferences[key]
-        
+
         self.save_preferences()
         print(f"Created default preferences file at {self.config_file}")
 
     def check_previous_preferences(self):
         """This method checks for previous preferences files in sibling directories of
-        config_dir, and if found, returns the most recent one. Otherwise, returns None."""
+        config_dir, and if found, returns the most recent one. Otherwise, returns None.
+        """
         previous_preferences = None
         previous_pref_files = []
         # Get list of previous preference files from sibling directories of config_dir
