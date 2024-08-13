@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from appdirs import user_config_dir
 
 from PySide6.QtWidgets import (
@@ -33,7 +34,7 @@ class Preferences:
             "plugin_requirements": os.path.join(
                 CURRENT_DIR, "plugins", "requirements.txt"
             ),
-            "theme": "auto",
+            "theme": "dark",
             "last_export_path": "",
             "debug": False,
             "show_welcome": True,
@@ -42,6 +43,8 @@ class Preferences:
         self.preferences = self.load_preferences()
 
     def load_preferences(self):
+        """Loads preferences JSON from file. If file does not exist, creates default
+        preferences."""
         if not os.path.exists(self.config_file):
             self.create_default_preferences()
             return self.preferences
@@ -49,14 +52,39 @@ class Preferences:
             return json.load(file)
 
     def save_preferences(self):
+        """Writes preferences JSON to file."""
         os.makedirs(self.config_dir, exist_ok=True)
         with open(self.config_file, "w") as file:
             json.dump(self.preferences, file, indent=4)
 
     def create_default_preferences(self):
         self.preferences = self.defaults.copy()
+        previous_preferences = self.check_previous_preferences()
+        print(previous_preferences)
+        if previous_preferences is not None:
+            for key in self.preferences:
+                if key in previous_preferences:
+                    self.preferences[key] = previous_preferences[key]
+        
         self.save_preferences()
         print(f"Created default preferences file at {self.config_file}")
+
+    def check_previous_preferences(self):
+        """This method checks for previous preferences files in sibling directories of
+        config_dir, and if found, returns the most recent one. Otherwise, returns None."""
+        previous_preferences = None
+        previous_pref_files = []
+        # Get list of previous preference files from sibling directories of config_dir
+        for root, dirs, files in os.walk(os.path.dirname(self.config_dir)):
+            for file in files:
+                if file == "preferences.json":
+                    previous_pref_files.append(os.path.join(root, file))
+        # Get the most recent preferences file based on version number in directory name
+        if previous_pref_files:
+            previous_pref_files.sort()
+            with open(previous_pref_files[-1], "r") as file:
+                previous_preferences = json.load(file)
+        return previous_preferences
 
     def get(self, key):
         return self.preferences.get(key, self.defaults.get(key))
