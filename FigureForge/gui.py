@@ -210,8 +210,6 @@ class MainWindow(QMainWindow):
 
         self.fe = self.fm.fe
         self.pi = self.fm.pi
-        self.figure_explorers = [self.fe]
-        self.property_inspectors = [self.pi]
 
         self.left_splitter = QSplitter(Qt.Vertical)
         self.left_splitter.setContentsMargins(0, 0, 5, 0)
@@ -241,8 +239,6 @@ class MainWindow(QMainWindow):
     def new_file(self):
         new_fm = FigureManager(self.preferences, self.setWindowTitle, None)
         self.figure_managers.append(new_fm)
-        self.figure_explorers.append(new_fm.fe)
-        self.property_inspectors.append(new_fm.pi)
 
         self.tab_widget.addTab(new_fm.canvas, "New Figure")
 
@@ -617,3 +613,16 @@ class MainWindow(QMainWindow):
                 return
         self.figure_managers.pop(index)
         self.tab_widget.removeTab(index)
+
+    def closeEvent(self, event):
+        for fm in self.figure_managers:
+            if fm.unsaved_changes:
+                res = self.save_work_dialog()
+                if res == QMessageBox.Save:
+                    self.save_file()
+                elif res == QMessageBox.Discard:
+                    pass
+                elif res == QMessageBox.Cancel:
+                    event.ignore()
+                    return
+        event.accept()         
