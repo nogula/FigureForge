@@ -27,6 +27,18 @@ A Python GUI application for interactive creation and editing of matplotlib figu
     ```
     FigureForge
     ```
+    or from within a script:
+   ```
+   import matplotlib.pyplot as plt
+   import FigureForge.main as FF
+
+   fig, ax = plt.subplots()
+   ax.plot([1,2,3,4],[1,4,9,16])
+
+   # Do edits with FigureForge...
+   fig = FF.main(fig)
+   # Continue your script after FigureForge closes...
+   ```
 
 ## Help
 The documentation for FigureForge is available on the project's [wiki](https://github.com/nogula/FigureForge/wiki) -- it is still a work in progress, but in the meantime you might find the [FAQ & Troubleshooting](https://github.com/nogula/FigureForge/wiki/FAQ-&-Troubleshooting) page helpful. Consider also creating a [new issue](https://github.com/nogula/FigureForge/issues), or ask a question in the [discussions](https://github.com/nogula/FigureForge/discussions/1).
