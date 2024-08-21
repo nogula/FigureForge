@@ -475,7 +475,7 @@ class MainWindow(QMainWindow):
             plugin.run(selected_obj)
             self.fm.canvas.draw()
             self.fm.unsaved_changes = True
-            self.fm.fe.build_tree(self.fm.figure)
+            self.fm.fe.build_tree(self.fm.figure, selected_obj)
 
     def delete_item(self):
         self.fm.delete_obj()
@@ -596,11 +596,14 @@ class MainWindow(QMainWindow):
         print(f"Updated recent files: {recent_files}")
 
     def change_tab(self, index):
-        self.fm = self.figure_managers[index]
-        self.fe = self.fm.fe
-        self.pi = self.fm.pi
-        self.left_splitter.replaceWidget(0, self.fe)
-        self.left_splitter.replaceWidget(1, self.pi)
+        try:
+            self.fm = self.figure_managers[index]
+            self.fe = self.fm.fe
+            self.pi = self.fm.pi
+            self.left_splitter.replaceWidget(0, self.fe)
+            self.left_splitter.replaceWidget(1, self.pi)
+        except AttributeError:
+            pass
 
     def close_tab(self, index):
         if self.figure_managers[index].unsaved_changes:
