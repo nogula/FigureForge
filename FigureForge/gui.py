@@ -241,6 +241,7 @@ class MainWindow(QMainWindow):
         self.figure_managers.append(new_fm)
 
         self.tab_widget.addTab(new_fm.canvas, "New Figure")
+        self.tab_widget.setCurrentIndex(self.tab_widget.count() - 1)
 
     def open_file(self):
         if self.fm.unsaved_changes:
