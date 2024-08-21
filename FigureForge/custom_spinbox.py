@@ -11,9 +11,7 @@ class SpinBox(QDoubleSpinBox):
         self.setMaximum(1e16)
 
     def textFromValue(self, value):
-        return (
-            ("{:." + str(self.decimals()) + "f}").format(value).rstrip("0").rstrip(".")
-        )
+        return str(value)
 
     def valueFromText(self, text):
         return float(text)
