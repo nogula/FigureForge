@@ -1,4 +1,4 @@
-from ast import Tuple
+import copy
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QPlainTextEdit,
 )
 from PySide6.QtCore import Signal
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QFont
 from PySide6.QtCore import Qt
 
 from FigureForge.color_button import ColorButton
@@ -20,6 +20,7 @@ from FigureForge.custom_spinbox import SpinBox
 from FigureForge.tuple_property import TupleProperty
 from FigureForge.dict_property import DictProperty
 import matplotlib.colors as mcolors
+import matplotlib.font_manager as fm
 
 
 class PropertyInspector(QWidget):
@@ -146,6 +147,18 @@ class PropertyInspector(QWidget):
         elif value_type == "dict":
             value_widget = DictProperty(types=types, values=value)
             value_widget.valueChanged.connect(
+                lambda n=name, w=value_widget: self.on_value_changed(n, w)
+            )
+            self.content_layout.addWidget(value_widget, row, 2)
+        elif value_type == "font":
+            value_widget = QComboBox()
+            font_names = sorted(set(f.name for f in fm.fontManager.ttflist))
+            for font_name in font_names:
+                value_widget.addItem(font_name)
+                font = QFont(font_name)
+                value_widget.setItemData(value_widget.count() - 1, font, Qt.FontRole)
+            value_widget.setCurrentText(value)
+            value_widget.currentTextChanged.connect(
                 lambda n=name, w=value_widget: self.on_value_changed(n, w)
             )
             self.content_layout.addWidget(value_widget, row, 2)
