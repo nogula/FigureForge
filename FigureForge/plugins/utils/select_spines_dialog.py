@@ -11,7 +11,7 @@ class SelectSpinesDialog(QDialog):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Select Spines to Remove")
+        self.setWindowTitle("Select Spines to Display")
         self.layout = QVBoxLayout(self)
         self.spines = [
             "top",
@@ -24,8 +24,8 @@ class SelectSpinesDialog(QDialog):
             checkbox = QCheckBox(spine)
             self.checkboxes.append(checkbox)
             self.layout.addWidget(checkbox)
-        self.checkboxes[0].setChecked(True)
-        self.checkboxes[3].setChecked(True)
+        self.checkboxes[1].setChecked(True)
+        self.checkboxes[2].setChecked(True)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)

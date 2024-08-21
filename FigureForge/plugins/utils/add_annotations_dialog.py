@@ -13,7 +13,10 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QColor
 
-from ...color_button import ColorButton
+from FigureForge import custom_spinbox
+
+from .color_button import ColorButton
+from .custom_spinbox import SpinBox
 
 
 class AddAnnotationsDialog(QDialog):
@@ -29,10 +32,10 @@ class AddAnnotationsDialog(QDialog):
         layout.addRow(QLabel("Text Color:"), self.text_color)
 
         xy_layout = QHBoxLayout()
-        self.x = QDoubleSpinBox()
+        self.x = SpinBox()
         self.x.setMinimum(-1e6)
         self.x.setMaximum(1e6)
-        self.y = QDoubleSpinBox()
+        self.y = SpinBox()
         self.y.setMinimum(-1e6)
         self.y.setMaximum(1e6)
         self.xycoords = QComboBox()
@@ -45,10 +48,10 @@ class AddAnnotationsDialog(QDialog):
         layout.addRow(QLabel("Position (x, y):"), xy_layout)
 
         xytext_layout = QHBoxLayout()
-        self.xtext = QDoubleSpinBox()
+        self.xtext = SpinBox()
         self.xtext.setMinimum(-1e6)
         self.xtext.setMaximum(1e6)
-        self.ytext = QDoubleSpinBox()
+        self.ytext = SpinBox()
         self.ytext.setMinimum(-1e6)
         self.ytext.setMaximum(1e6)
         self.xytextcoords = QComboBox()
@@ -69,7 +72,6 @@ class AddAnnotationsDialog(QDialog):
         self.arrowstyle = QComboBox()
         self.arrowstyle.addItems(
             [
-                "-",
                 "->",
                 "<-",
                 "<->",
@@ -102,15 +104,15 @@ class AddAnnotationsDialog(QDialog):
             ]
         )
         shrink_layout = QHBoxLayout()
-        self.shrinkA = QDoubleSpinBox()
+        self.shrinkA = SpinBox()
         self.shrinkA.setMinimum(-1e6)
         self.shrinkA.setMaximum(1e6)
-        self.shrinkB = QDoubleSpinBox()
+        self.shrinkB = SpinBox()
         self.shrinkB.setMinimum(-1e6)
         self.shrinkB.setMaximum(1e6)
         shrink_layout.addWidget(self.shrinkA)
         shrink_layout.addWidget(self.shrinkB)
-        self.linewidth = QDoubleSpinBox()
+        self.linewidth = SpinBox()
         self.linewidth.setMinimum(0)
         self.linewidth.setMaximum(1e6)
         self.linewidth.setValue(0.5)
@@ -129,7 +131,7 @@ class AddAnnotationsDialog(QDialog):
         }
         self.arrowattrs_widgets = {}
         for attr, value in self.arrowattrs.items():
-            spinbox = QDoubleSpinBox()
+            spinbox = SpinBox()
             spinbox.setMinimum(-1e6)
             spinbox.setMaximum(1e6)
             spinbox.setValue(value)
@@ -146,7 +148,7 @@ class AddAnnotationsDialog(QDialog):
         }
         self.connectionattrs_widgets = {}
         for attr, value in self.connectionattrs.items():
-            spinbox = QDoubleSpinBox()
+            spinbox = SpinBox()
             spinbox.setMinimum(-1e6)
             spinbox.setMaximum(1e6)
             spinbox.setValue(value)
