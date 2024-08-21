@@ -42,16 +42,16 @@ class FigureExplorer(QWidget):
         layout.addWidget(self.tree)
         self.setLayout(layout)
 
-    def build_tree(self, figure):
+    def build_tree(self, figure, last_obj = None):
         self.tree.clear()
         self.tree.addTopLevelItem(QTreeWidgetItem(["Figure"]))
         root = self.tree.topLevelItem(0)
         root.reference = figure
         for i, item in enumerate(root.reference.get_children()):
-            self.add_item(root, item)
+            self.add_item(root, item, last_obj)
         self.tree.expandItem(root)
 
-    def add_item(self, parent, child):
+    def add_item(self, parent, child, last_obj):
         class_name = child.__class__.__name__
         if child.get_label() != "":
             label = f"{class_name} - {child.get_label()}"
@@ -61,8 +61,11 @@ class FigureExplorer(QWidget):
         root = parent.child(parent.childCount() - 1)
         root.reference = child
 
+        if last_obj is not None and last_obj == child:
+            self.tree.setCurrentItem(root)
+
         for i, item in enumerate(root.reference.get_children()):
-            self.add_item(root, item)
+            self.add_item(root, item, last_obj)
 
     def on_item_clicked(self, item):
         self.itemSelected.emit(item.reference)
