@@ -30,13 +30,13 @@ A Python GUI application for interactive creation and editing of matplotlib figu
     or from within a script:
    ```
    import matplotlib.pyplot as plt
-   import FigureForge.main as FF
+   import FigureForge
 
    fig, ax = plt.subplots()
    ax.plot([1,2,3,4],[1,4,9,16])
 
    # Do edits with FigureForge...
-   fig = FF.main(fig)
+   fig = FigureForge.run(fig)
    # Continue your script after FigureForge closes...
    ```
 
