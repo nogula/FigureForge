@@ -242,11 +242,6 @@
         "get": "get_visible",
         "set": "set_visible"
       },
-      "Use TeX": {
-        "type": "bool",
-        "get": "get_usetex",
-        "set": "set_usetex"
-      },
       "Text": {
         "type": "multiline",
         "get": "get_text",
@@ -258,7 +253,7 @@
         "set": "set_fontsize"
       },
       "Font Name": {
-        "type": "string",
+        "type": "font",
         "get": "get_fontname",
         "set": "set_fontname"
       },
@@ -483,7 +478,7 @@
         "set": "set_fontsize"
       },
       "Font Name": {
-        "type": "string",
+        "type": "font",
         "get": "get_fontname",
         "set": "set_fontname"
       },
@@ -674,7 +669,7 @@
         "set": "get_title.set_fontsize"
       },
       "Title Font Name": {
-        "type": "string",
+        "type": "font",
         "get": "get_title.get_fontname",
         "set": "get_title.set_fontname"
       },
