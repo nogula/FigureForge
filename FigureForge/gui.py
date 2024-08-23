@@ -282,11 +282,14 @@ class MainWindow(QMainWindow):
         self.update_recent_files()
 
     def export_figure(self):
+        old_dpi = self.fm.figure.get_dpi()
         dialog = ExportFigureDialog(self.preferences, self.fm.figure)
         dialog.exec()
         self.fm.canvas.draw()
         if self.preferences.get("debug"):
             print("Exported figure")
+        self.fm.figure.set_dpi(old_dpi)
+        self.fm.canvas.draw()
 
     def quit(self):
         if self.fm.unsaved_changes:
