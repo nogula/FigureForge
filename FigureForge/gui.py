@@ -197,7 +197,7 @@ class MainWindow(QMainWindow):
         splitter = QSplitter(Qt.Horizontal)
         splitter.setContentsMargins(0, 0, 0, 0)
 
-        self.fm = FigureManager(self.preferences, self.setWindowTitle, figure)
+        self.fm = FigureManager(self.preferences, figure)
         self.figure_managers = [self.fm]
         self.tab_widget = QTabWidget(tabsClosable=True)
         self.tab_widget.currentChanged.connect(self.change_tab)
@@ -228,7 +228,11 @@ class MainWindow(QMainWindow):
         dialog = QMessageBox()
         dialog.setIcon(QMessageBox.Question)
         dialog.setWindowTitle("Save Work")
-        dialog.setText("Do you want to save your work?")
+        if self.fm.file_name is None:
+            filename = "New Figure"
+        else:
+            filename = self.fm.file_name.split("/")[-1]
+        dialog.setText(f"Do you want to save your work?\n{filename}")
         dialog.setStandardButtons(
             QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
         )
@@ -237,11 +241,15 @@ class MainWindow(QMainWindow):
         return button
 
     def new_file(self):
-        new_fm = FigureManager(self.preferences, self.setWindowTitle, None)
+        new_fm = FigureManager(self.preferences, None)
         self.figure_managers.append(new_fm)
 
         self.tab_widget.addTab(new_fm.canvas, "New Figure")
         self.tab_widget.setCurrentIndex(self.tab_widget.count() - 1)
+        new_fm.updateLabel.connect(self.update_tab_label)
+
+    def update_tab_label(self, label):
+        self.tab_widget.setTabText(self.tab_widget.currentIndex(), label)
 
     def open_file(self):
         if self.fm.unsaved_changes:

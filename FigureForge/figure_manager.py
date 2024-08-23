@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QMessageBox,
 )
+from PySide6.QtCore import Signal
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -17,6 +18,7 @@ from FigureForge.figure_explorer import FigureExplorer
 
 
 class FigureManager(QWidget):
+    updateLabel = Signal(str)
     """
     A class that manages the creation, loading, and modification of figures.
 
@@ -34,13 +36,12 @@ class FigureManager(QWidget):
         propertyChanged: A signal emitted when a property is changed in the PropertyInspector.
     """
 
-    def __init__(self, preferences, set_window_title_method, figure=None) -> None:
+    def __init__(self, preferences, figure=None) -> None:
         """
         Initializes a new instance of the FigureManager class.
         """
         super().__init__()
         self.preferences = preferences
-        self.update_window_title = set_window_title_method
 
         self.pi = PropertyInspector()
         self.fe = FigureExplorer()
@@ -91,7 +92,7 @@ class FigureManager(QWidget):
         self.figure.__dict__.update(data.__dict__)
         self.canvas.draw()
         self.unsaved_changes = False
-        self.update_window_title(f"FigureForge - {file_name}")
+        self.updateLabel.emit(file_name.split("/")[-1])
         self.fe.build_tree(self.figure)
         self.pi.clear_properties()
         self.file_name = file_name
@@ -108,7 +109,7 @@ class FigureManager(QWidget):
         with open(file_name, "wb") as file:
             pickle.dump(self.figure, file)
         self.unsaved_changes = False
-        self.update_window_title(f"FigureForge - {file_name}")
+        self.updateLabel.emit(file_name.split("/")[-1])
         if self.preferences.get("debug"):
             print(f"Saved figure to {file_name}")
 
@@ -119,7 +120,7 @@ class FigureManager(QWidget):
         self.figure.clear()
         self.file_name = None
         self.unsaved_changes = False
-        self.update_window_title(f"FigureForge - New Figure")
+        self.updateLabel.emit("New Figure")
         self.canvas.draw()
         self.fe.build_tree(self.figure)
         if self.preferences.get("debug"):
@@ -172,7 +173,7 @@ class FigureManager(QWidget):
 
         self.canvas.draw()
         self.unsaved_changes = True
-        self.update_window_title(f"FigureForge - {self.file_name} *Unsaved changes")
+        self.updateLabel.emit(f"{self.file_name.split('/')[-1]} *")
 
         if self.preferences.get("debug"):
             print(f"Changed {property_name} to {value} on {obj_class}")
@@ -187,7 +188,7 @@ class FigureManager(QWidget):
         self.attempt_delete(self.selected_obj)
         self.canvas.draw()
         self.unsaved_changes = True
-        self.update_window_title(f"FigureForge - {self.file_name} *Unsaved changes")
+        self.updateLabel.emit(f"{self.file_name.split('/')[-1]} *")
 
         self.fe.build_tree(self.figure)
         self.selected_obj = None
