@@ -62,7 +62,7 @@ class FigureManager(QWidget):
 
         # Connect signals to slots
         self.fe.itemSelected.connect(self.on_item_selected)
-        self.fe.refreshTree.connect(lambda: self.fe.build_tree(self.figure))
+        self.fe.refreshTree.connect(lambda: self.load_figure(self.file_name))
         self.pi.propertyChanged.connect(self.on_property_changed)
         self.selected_obj = None
 
@@ -86,6 +86,8 @@ class FigureManager(QWidget):
         Args:
             file_name (str): The name of the file to load the figure from.
         """
+        if file_name is None:
+            return
         self.new_figure()
         with open(file_name, "rb") as file:
             data = pickle.load(file)
