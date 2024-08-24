@@ -29,12 +29,13 @@ class FigureExplorer(QWidget):
         header_layout = QHBoxLayout()
         header_layout.addWidget(QLabel("Figure Explorer"))
         header_layout.addStretch()
-        refresh_button = QPushButton("Refresh")
-        refresh_button.setIcon(
+        reload_button = QPushButton("Reload")
+        reload_button.setToolTip("Reload from file")
+        reload_button.setIcon(
             QIcon(os.path.join(CURRENT_DIR, "resources/icons/refresh_icon.png"))
         )
-        refresh_button.clicked.connect(self.refreshTree.emit)
-        header_layout.addWidget(refresh_button)
+        reload_button.clicked.connect(self.refreshTree.emit)
+        header_layout.addWidget(reload_button)
         layout.addLayout(header_layout)
         self.tree = QTreeWidget()
         self.tree.header().hide()
