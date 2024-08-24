@@ -157,6 +157,9 @@ class MainWindow(QMainWindow):
         self.plugin_menu.addSeparator()
         open_plugins_folder_action = QAction("Open Plugins Folder...", self)
         open_plugins_folder_action.triggered.connect(self.open_plugins_folder)
+        open_plugins_folder_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/folder_icon.png"))
+        )
         self.plugin_menu.addAction(open_plugins_folder_action)
         reload_plugins_action = QAction("Reload Plugins", self)
         reload_plugins_action.triggered.connect(self.reload_plugins)
@@ -166,7 +169,16 @@ class MainWindow(QMainWindow):
         self.plugin_menu.addAction(reload_plugins_action)
         plugins_documentation_action = QAction("Plugins Documentation", self)
         plugins_documentation_action.triggered.connect(self.plugins_documentation)
+        plugins_documentation_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/documentation_icon.png"))
+        )
         self.plugin_menu.addAction(plugins_documentation_action)
+        new_plugin_action = QAction("New Plugin", self)
+        new_plugin_action.triggered.connect(self.new_plugin)
+        new_plugin_action.setIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/icons/new_icon.png"))
+        )
+        self.plugin_menu.addAction(new_plugin_action)
 
         help_menu = menubar.addMenu("Help")
 
@@ -495,12 +507,26 @@ class MainWindow(QMainWindow):
     def reload_plugins(self):
         actions = self.plugin_menu.actions()
         total_actions = len(actions)
-        actions_to_remove = actions[: total_actions - 3]
+        actions_to_remove = actions[: total_actions - 4]
 
         for action in actions_to_remove:
             self.plugin_menu.removeAction(action)
 
         self.load_plugins(reload=True)
+
+    def new_plugin(self):
+        """Creates a new plugin file from the template and opens it in the default app.
+        """
+        template_filename = os.path.join(CURRENT_DIR, "resources/templates/plugin_template.py")
+        plugin_dir = self.preferences.get("plugin_directory")
+        new_plugin_filename = os.path.join(plugin_dir, "new_plugin.py")
+        with open(template_filename, "r") as template_file:
+            template = template_file.read()
+        with open(new_plugin_filename, "w") as new_plugin_file:
+            new_plugin_file.write(template)
+        self.reload_plugins()
+        url = QUrl.fromLocalFile(new_plugin_filename)
+        QDesktopServices.openUrl(url)
 
     def reload_json_structure(self):
         self.fm.load_json_structure()
