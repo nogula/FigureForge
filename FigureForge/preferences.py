@@ -39,6 +39,7 @@ class Preferences:
             "debug": False,
             "show_welcome": True,
             "recent_files": [],
+            "check_for_updates": True,
         }
         self.preferences = self.load_preferences()
 

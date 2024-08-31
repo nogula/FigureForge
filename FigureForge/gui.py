@@ -1,13 +1,10 @@
-from email import message
-from email.charset import QP
-from ensurepip import bootstrap
 import sys
 import os
 import subprocess
 import importlib
 import inspect
 from io import BytesIO
-from appdirs import user_config_dir
+import requests
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -30,7 +27,6 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 
-from matplotlib.pylab import f
 import qdarktheme
 
 from FigureForge.__init__ import __version__, CURRENT_DIR
@@ -59,6 +55,8 @@ class MainWindow(QMainWindow):
 
         self.show()
         self.show_welcome_dialog()
+        if self.preferences.get("check_for_updates"):
+            self.check_for_updates()
 
     def create_menus(self):
         """Creates the menubar at the top of the main window."""
@@ -700,3 +698,44 @@ class MainWindow(QMainWindow):
                     event.ignore()
                     return
         event.accept()
+
+    def check_for_updates(self):
+        url = "https://api.github.com/repos/nogula/FigureForge/releases/latest"
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+            latest_version = data["tag_name"]
+            if latest_version != "v"+__version__:
+                dialog = QDialog()
+                dialog.setWindowTitle("Update Available")
+                layout = QVBoxLayout()
+                message = QLabel(
+                    f"An update is available. Your version: v{__version__}, Latest version: {latest_version}"
+                )
+                layout.addWidget(message)
+                check = QCheckBox("Check for updates at startup")
+                check.setChecked(True)
+                layout.addWidget(check)
+                button_layout = QHBoxLayout()
+                button_layout.addStretch()
+                update_button = QPushButton("Update")
+                update_button.clicked.connect(
+                    lambda: QDesktopServices.openUrl(
+                        QUrl("https://github.com/nogula/FigureForge/releases/latest")
+                    )
+                )
+                update_button.clicked.connect(dialog.close)
+                button_layout.addWidget(update_button)
+                update_button.setDefault(True)
+                close_button = QPushButton("Close")
+                close_button.clicked.connect(dialog.close)
+                button_layout.addWidget(close_button)
+                layout.addLayout(button_layout)
+                dialog.setLayout(layout)
+                dialog.exec()
+                if not check.isChecked():
+                    self.preferences.set("check_for_updates", False)
+        except Exception as e:
+            print(f"Failed to check for updates: {e}")
+
