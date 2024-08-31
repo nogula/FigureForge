@@ -38,6 +38,8 @@ class ToggleSpines:
                             obj.spines[spine].set_visible(True)
         else:
             msg_failure = QMessageBox()
-            msg_failure.setText(f"Invalid obj type: {type(obj)}. Must be Figure, Axes, or Spine.")
+            msg_failure.setText(
+                f"Invalid obj type: {type(obj)}. Must be Figure, Axes, or Spine."
+            )
             msg_failure.setIcon(QMessageBox.Warning)
             msg_failure.exec()

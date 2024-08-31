@@ -43,7 +43,7 @@ class FigureExplorer(QWidget):
         layout.addWidget(self.tree)
         self.setLayout(layout)
 
-    def build_tree(self, figure, last_obj = None):
+    def build_tree(self, figure, last_obj=None):
         self.tree.clear()
         self.tree.addTopLevelItem(QTreeWidgetItem(["Figure"]))
         root = self.tree.topLevelItem(0)

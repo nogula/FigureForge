@@ -518,9 +518,10 @@ class MainWindow(QMainWindow):
         self.load_plugins(reload=True)
 
     def new_plugin(self):
-        """Creates a new plugin file from the template and opens it in the default app.
-        """
-        template_filename = os.path.join(CURRENT_DIR, "resources/templates/plugin_template.py")
+        """Creates a new plugin file from the template and opens it in the default app."""
+        template_filename = os.path.join(
+            CURRENT_DIR, "resources/templates/plugin_template.py"
+        )
         plugin_dir = self.preferences.get("plugin_directory")
         new_plugin_filename = os.path.join(plugin_dir, "new_plugin.py")
         with open(template_filename, "r") as template_file:
@@ -532,7 +533,9 @@ class MainWindow(QMainWindow):
         # Create dialog to let use copy the path to the clipboard or open the file
         dialog = QDialog()
         dialog.setWindowTitle("New Plugin Created")
-        dialog.setWindowIcon(QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico")))
+        dialog.setWindowIcon(
+            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
+        )
         layout = QVBoxLayout()
         message = QLabel(f"New plugin created at:\n{new_plugin_filename}")
         layout.addWidget(message)
@@ -541,13 +544,17 @@ class MainWindow(QMainWindow):
         ok_button = QPushButton("OK")
         copy_button = QPushButton("Copy Path")
         open_button = QPushButton("Open Folder")
-        for button in [copy_button, open_button,ok_button]:
+        for button in [copy_button, open_button, ok_button]:
             button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
             button.setFixedWidth(100)
             button.clicked.connect(dialog.close)
             button_layout.addWidget(button)
-        copy_button.clicked.connect(lambda: QApplication.clipboard().setText(new_plugin_filename))
-        open_button.clicked.connect(lambda: QDesktopServices.openUrl(QUrl.fromLocalFile(plugin_dir)))
+        copy_button.clicked.connect(
+            lambda: QApplication.clipboard().setText(new_plugin_filename)
+        )
+        open_button.clicked.connect(
+            lambda: QDesktopServices.openUrl(QUrl.fromLocalFile(plugin_dir))
+        )
         ok_button.setDefault(True)
         layout.addLayout(button_layout)
 
