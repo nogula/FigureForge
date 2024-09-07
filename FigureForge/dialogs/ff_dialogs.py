@@ -1,0 +1,7 @@
+from FigureForge.dialogs.new_plugin_dialog import NewPluginDialog
+from FigureForge.dialogs.export_figure_dialog import ExportFigureDialog
+from FigureForge.dialogs.bug_report_dialog import BugReportDialog
+from FigureForge.dialogs.about_dialog import AboutDialog
+from FigureForge.dialogs.save_work_dialog import SaveWorkDialog
+from FigureForge.dialogs.update_check import check_for_updates
+from FigureForge.dialogs.welcome_dialog import WelcomeDialog

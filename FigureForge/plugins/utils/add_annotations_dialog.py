@@ -1,10 +1,7 @@
 from PySide6.QtWidgets import (
-    QMessageBox,
-    QVBoxLayout,
     QCheckBox,
     QDialogButtonBox,
     QDialog,
-    QDoubleSpinBox,
     QLineEdit,
     QComboBox,
     QLabel,
@@ -12,8 +9,6 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
 )
 from PySide6.QtGui import QColor
-
-from FigureForge import custom_spinbox
 
 from .color_button import ColorButton
 from .custom_spinbox import SpinBox

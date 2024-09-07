@@ -12,16 +12,11 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QIcon, QPixmap, QDesktopServices
 from PySide6.QtCore import QSize, Qt
 
-from FigureForge.__init__ import CURRENT_DIR, __version__
-
+from FigureForge.__init__ import ASSETS_DIR, __version__
 from PySide6.__init__ import __version__ as pyside_version
-
-# from matplotlib.__init__ import __version__ as mpl_version
-from PySide6.QtWidgets import QMessageBox
-
-# Build errors with nuikta when trying to get mpl version as "from matplotlib.__init__ import __version__ as mpl_version" so this is the workaround
+# Build errors with nuikta when trying to get mpl version as
+# "from matplotlib.__init__ import __version__ as mpl_version" so this is the workaround
 import matplotlib
-
 mpl_version = matplotlib.__version__
 
 
@@ -31,14 +26,14 @@ class BugReportDialog(QDialog):
 
         self.setWindowTitle("FigureForge Bug Report")
         self.setWindowIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
+            QIcon(os.path.join(ASSETS_DIR, "logo.ico"))
         )
 
         layout = QGridLayout()
 
         logo = QLabel()
         logo.setPixmap(
-            QPixmap(os.path.join(CURRENT_DIR, "resources/assets/logo_color_text.png"))
+            QPixmap(os.path.join(ASSETS_DIR, "logo_color_text.png"))
         )
         logo.setScaledContents(True)
         logo.setFixedSize(QSize(100, 100))
@@ -77,6 +72,8 @@ class BugReportDialog(QDialog):
         layout.addWidget(btn_box, 1, 0, 1, 2, Qt.AlignCenter)
 
         self.setLayout(layout)
+
+        self.exec()
 
     def open_issues_page(self):
         url = "https://github.com/nogula/FigureForge/issues/new/choose"

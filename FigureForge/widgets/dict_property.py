@@ -9,8 +9,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Signal
 
-from FigureForge.color_button import ColorButton
-from FigureForge.custom_spinbox import SpinBox
+from FigureForge.widgets.color_button import ColorButton
+from FigureForge.widgets.custom_spinbox import SpinBox
 
 
 class DictProperty(QWidget):

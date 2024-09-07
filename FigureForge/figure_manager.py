@@ -74,8 +74,8 @@ class FigureManager(QWidget):
         Loads the JSON figure property structure from a file.
         """
         json_file = os.path.join(CURRENT_DIR, "structure.json")
-        with open(json_file) as file:
-            self.structure = json.load(file)
+        with open(json_file) as f:
+            self.structure = json.load(f)
         if self.preferences.get("debug"):
             print(f"Loaded structure: {json_file}")
 
@@ -89,12 +89,14 @@ class FigureManager(QWidget):
         if file_name is None:
             return
         self.new_figure()
-        with open(file_name, "rb") as file:
-            data = pickle.load(file)
+        with open(file_name, "rb") as f:
+            data = pickle.load(f)
         self.figure.__dict__.update(data.__dict__)
         self.canvas.draw()
         self.unsaved_changes = False
-        self.updateLabel.emit(file_name.split("/")[-1])
+        self.updateLabel.emit(
+            file_name.split("/")[-1] if self.file_name is not None else "New Figure"
+        )
         self.fe.build_tree(self.figure)
         self.pi.clear_properties()
         self.file_name = file_name
@@ -108,8 +110,8 @@ class FigureManager(QWidget):
         Args:
             file_name (str): The name of the file to save the figure to.
         """
-        with open(file_name, "wb") as file:
-            pickle.dump(self.figure, file)
+        with open(file_name, "wb") as f:
+            pickle.dump(self.figure, f)
         self.unsaved_changes = False
         self.updateLabel.emit(file_name.split("/")[-1])
         if self.preferences.get("debug"):
@@ -175,7 +177,9 @@ class FigureManager(QWidget):
 
         self.canvas.draw()
         self.unsaved_changes = True
-        self.updateLabel.emit(f"{self.file_name.split('/')[-1]} *")
+        self.updateLabel.emit(
+            f"{self.file_name.split('/')[-1] if self.file_name is not None else 'New Figure'} *"
+        )
 
         if self.preferences.get("debug"):
             print(f"Changed {property_name} to {value} on {obj_class}")
@@ -190,7 +194,9 @@ class FigureManager(QWidget):
         self.attempt_delete(self.selected_obj)
         self.canvas.draw()
         self.unsaved_changes = True
-        self.updateLabel.emit(f"{self.file_name.split('/')[-1]} *")
+        self.updateLabel.emit(
+            f"{self.file_name.split('/')[-1] if self.file_name is not None else 'New Figure'} *"
+        )
 
         self.fe.build_tree(self.figure)
         self.selected_obj = None

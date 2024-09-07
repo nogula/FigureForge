@@ -150,6 +150,8 @@ class PreferencesDialog(QDialog):
         main_layout.addWidget(button_box)
         self.setLayout(main_layout)
 
+        self.exec()
+
     def browse_plugin_directory(self):
         directory = QFileDialog.getExistingDirectory(self, "Select Plugin Directory")
         if directory:

@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Signal
 
-from FigureForge.custom_spinbox import SpinBox
+from FigureForge.widgets.custom_spinbox import SpinBox
 
 
 class TupleProperty(QWidget):
