@@ -19,22 +19,22 @@ from PySide6.QtGui import QIcon
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-from FigureForge.__init__ import CURRENT_DIR
-from FigureForge.custom_spinbox import SpinBox
+from FigureForge.__init__ import ASSETS_DIR
+from FigureForge.widgets.custom_spinbox import SpinBox
 
 
 class ExportFigureDialog(QDialog):
     def __init__(self, preferences, figure):
         super().__init__()
         self.setWindowTitle("Export Figure")
-        self.setWindowIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
-        )
+        self.setWindowIcon(QIcon(os.path.join(ASSETS_DIR, "logo.ico")))
         self.setMinimumSize(800, 600)
         self.preferences = preferences
         self.figure = figure
         self.last_export_path = preferences.get("last_export_path")
         self.init_ui()
+
+        self.exec()
 
     def init_ui(self):
         main_layout = QHBoxLayout()

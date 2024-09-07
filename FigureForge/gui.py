@@ -4,7 +4,6 @@ import subprocess
 import importlib
 import inspect
 from io import BytesIO
-import requests
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -14,25 +13,30 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QMainWindow,
     QMessageBox,
-    QPushButton,
-    QHBoxLayout,
-    QLabel,
-    QDialog,
-    QGridLayout,
     QMenu,
-    QCheckBox,
     QTabWidget,
-    QSizePolicy,
 )
-from PySide6.QtCore import Qt, QUrl, QSize
+from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 
 import qdarktheme
 
-from FigureForge.__init__ import __version__, CURRENT_DIR
+from FigureForge.__init__ import (
+    __version__,
+    ICONS_DIR,
+    CURRENT_DIR,
+    ASSETS_DIR,
+)
+from FigureForge.dialogs.ff_dialogs import (   
+    check_for_updates,
+    NewPluginDialog,
+    ExportFigureDialog,
+    BugReportDialog,
+    AboutDialog,
+    SaveWorkDialog,
+    WelcomeDialog,
+)
 from FigureForge.figure_manager import FigureManager
-from FigureForge.bug_report_dialog import BugReportDialog
-from FigureForge.export_figure_dialog import ExportFigureDialog
 from FigureForge.preferences import Preferences, PreferencesDialog
 
 
@@ -41,7 +45,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("FigureForge")
         self.setWindowIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
+            QIcon(os.path.join(ASSETS_DIR, "logo.ico"))
         )
         self.setMinimumSize(800, 600)
 
@@ -54,9 +58,20 @@ class MainWindow(QMainWindow):
         self.init_ui(figure)
 
         self.show()
-        self.show_welcome_dialog()
+        if self.preferences.get("show_welcome"):
+            res = WelcomeDialog()
+            if res.display_at_startup.isChecked():
+                self.preferences.set("show_welcome", True)
+            else:
+                self.preferences.set("show_welcome", False)
+            if res.check_for_updates.isChecked():
+                self.preferences.set("check_for_updates", True)
+            else:
+                self.preferences.set("check_for_updates", False)
         if self.preferences.get("check_for_updates"):
-            self.check_for_updates()
+            res = check_for_updates()
+            if res is not None:
+                self.preferences.set("check_for_updates", res)
 
     def create_menus(self):
         """Creates the menubar at the top of the main window."""
@@ -67,7 +82,7 @@ class MainWindow(QMainWindow):
 
         new_action = QAction("New", self)
         new_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/new_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "new_icon.png"))
         )
         new_action.setShortcut("Ctrl+N")
         new_action.triggered.connect(self.new_file)
@@ -75,7 +90,7 @@ class MainWindow(QMainWindow):
 
         open_action = QAction("Open...", self)
         open_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/open_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "open_icon.png"))
         )
         open_action.setShortcut("Ctrl+O")
         open_action.triggered.connect(self.open_file)
@@ -87,7 +102,7 @@ class MainWindow(QMainWindow):
 
         save_action = QAction("Save", self)
         save_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/save_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "save_icon.png"))
         )
         save_action.setShortcut("Ctrl+S")
         save_action.triggered.connect(self.save_file)
@@ -95,7 +110,7 @@ class MainWindow(QMainWindow):
 
         save_as_action = QAction("Save As...", self)
         save_as_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/save_as_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "save_as_icon.png"))
         )
         save_as_action.setShortcut("Ctrl+Shift+S")
         save_as_action.triggered.connect(self.save_as_file)
@@ -106,7 +121,7 @@ class MainWindow(QMainWindow):
         export_action = QAction("Export", self)
         export_action.triggered.connect(self.export_figure)
         export_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/export_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "export_icon.png"))
         )
         export_action.setShortcut("Ctrl+E")
         file_menu.addAction(export_action)
@@ -116,7 +131,7 @@ class MainWindow(QMainWindow):
         quit_action = QAction("Quit", self)
         quit_action.triggered.connect(self.quit)
         quit_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/quit_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "quit_icon.png"))
         )
         quit_action.setShortcut("Ctrl+Q")
         file_menu.addAction(quit_action)
@@ -126,28 +141,25 @@ class MainWindow(QMainWindow):
         copy_figure_action = QAction("Copy Figure", self)
         copy_figure_action.triggered.connect(self.copy_figure)
         copy_figure_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/copy_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "copy_icon.png"))
         )
         copy_figure_action.setShortcut("Ctrl+C")
         edit_menu.addAction(copy_figure_action)
 
         delete_item_action = QAction("Delete Item", self)
-        delete_item_action.triggered.connect(self.delete_item)
+        delete_item_action.triggered.connect(lambda: self.fm.delete_item())
         delete_item_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/delete_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "delete_icon.png"))
         )
         delete_item_action.setShortcut("Del")
         edit_menu.addAction(delete_item_action)
 
-        reload_structure_action = QAction("Reload Structure", self)
-        reload_structure_action.triggered.connect(self.reload_json_structure)
-        reload_structure_action.setShortcut("Ctrl+R")
-        edit_menu.addAction(reload_structure_action)
-
         preferences_action = QAction("Preferences", self)
-        preferences_action.triggered.connect(self.show_preferences_dialog)
+        preferences_action.triggered.connect(
+            lambda: PreferencesDialog(self.preferences, self)
+        )
         preferences_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/preferences_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "preferences_icon.png"))
         )
         edit_menu.addAction(preferences_action)
 
@@ -157,50 +169,62 @@ class MainWindow(QMainWindow):
         self.load_plugins()
         self.plugin_menu.addSeparator()
         open_plugins_folder_action = QAction("Open Plugins Folder...", self)
-        open_plugins_folder_action.triggered.connect(self.open_plugins_folder)
+        open_plugins_folder_action.triggered.connect(
+            lambda: QDesktopServices.openUrl(
+                QUrl.fromLocalFile(self.preferences.get("plugin_directory"))
+            )
+        )
         open_plugins_folder_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/folder_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "folder_icon.png"))
         )
         self.plugin_menu.addAction(open_plugins_folder_action)
         reload_plugins_action = QAction("Reload Plugins", self)
         reload_plugins_action.triggered.connect(self.reload_plugins)
         reload_plugins_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/refresh_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "refresh_icon.png"))
         )
         self.plugin_menu.addAction(reload_plugins_action)
         plugins_documentation_action = QAction("Plugins Documentation", self)
-        plugins_documentation_action.triggered.connect(self.plugins_documentation)
+        plugins_documentation_action.triggered.connect(
+            lambda: QDesktopServices.openUrl(
+                QUrl("https://github.com/nogula/FigureForge/wiki/Plugins")
+            )
+        )
         plugins_documentation_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/documentation_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "documentation_icon.png"))
         )
         self.plugin_menu.addAction(plugins_documentation_action)
         new_plugin_action = QAction("New Plugin", self)
         new_plugin_action.triggered.connect(self.new_plugin)
         new_plugin_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/new_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "new_icon.png"))
         )
         self.plugin_menu.addAction(new_plugin_action)
 
         help_menu = menubar.addMenu("Help")
 
         about_action = QAction("About", self)
-        about_action.triggered.connect(self.about_pressed)
+        about_action.triggered.connect(lambda: AboutDialog())
         about_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/about_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "about_icon.png"))
         )
         help_menu.addAction(about_action)
 
         help_action = QAction("Help", self)
-        help_action.triggered.connect(self.help_pressed)
+        help_action.triggered.connect(
+            lambda: QDesktopServices.openUrl(
+                QUrl("https://github.com/nogula/FigureForge/wiki")
+            )
+        )
         help_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/documentation_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "documentation_icon.png"))
         )
         help_menu.addAction(help_action)
 
         bug_action = QAction("Report Bug", self)
-        bug_action.triggered.connect(self.bug_pressed)
+        bug_action.triggered.connect(lambda: BugReportDialog(self))
         bug_action.setIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/icons/bug_icon.png"))
+            QIcon(os.path.join(ICONS_DIR, "bug_icon.png"))
         )
         help_menu.addAction(bug_action)
 
@@ -237,42 +261,21 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(splitter)
         self.setCentralWidget(main_widget)
 
-    def save_work_dialog(self):
-        dialog = QMessageBox()
-        dialog.setIcon(QMessageBox.Question)
-        dialog.setWindowTitle("Save Work")
-        if self.fm.file_name is None:
-            filename = "New Figure"
-        else:
-            filename = self.fm.file_name.split("/")[-1]
-        dialog.setText(f"Do you want to save your work?\n{filename}")
-        dialog.setStandardButtons(
-            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
-        )
-        dialog.setDefaultButton(QMessageBox.Save)
-        button = dialog.exec()
-        return button
-
     def new_file(self):
         new_fm = FigureManager(self.preferences, None)
         self.figure_managers.append(new_fm)
 
         self.tab_widget.addTab(new_fm.canvas, "New Figure")
         self.tab_widget.setCurrentIndex(self.tab_widget.count() - 1)
-        new_fm.updateLabel.connect(self.update_tab_label)
-
-    def update_tab_label(self, label):
-        self.tab_widget.setTabText(self.tab_widget.currentIndex(), label)
+        new_fm.updateLabel.connect(
+            lambda label: self.tab_widget.setTabText(
+                self.tab_widget.currentIndex(), label
+            )
+        )
 
     def open_file(self):
-        if self.fm.unsaved_changes:
-            res = self.save_work_dialog()
-            if res == QMessageBox.Save:
-                self.save_file()
-            elif res == QMessageBox.Discard:
-                pass
-            elif res == QMessageBox.Cancel:
-                return
+        if not self.check_for_save(self.fm):
+            return
         options = QFileDialog.Options()
         file_name, _ = QFileDialog.getOpenFileName(
             self, "Open File", "", "Figure Files (*.pkl)", options=options
@@ -280,7 +283,11 @@ class MainWindow(QMainWindow):
         if file_name:
             self.fm.file_name = file_name
             self.fm.load_figure(self.fm.file_name)
-            tab_title = self.fm.file_name.split("/")[-1]
+            tab_title = (
+                self.fm.file_name.split("/")[-1]
+                if self.fm.file_name is not None
+                else "New Figure"
+            )
             self.tab_widget.setTabText(self.tab_widget.currentIndex(), tab_title)
 
     def save_file(self):
@@ -289,8 +296,14 @@ class MainWindow(QMainWindow):
         else:
             self.fm.save_figure(self.fm.file_name)
         self.update_recent_files()
-        tab_title = self.fm.file_name.split("/")[-1]
-        self.tab_widget.setTabText(self.tab_widget.currentIndex(), tab_title)
+        self.tab_widget.setTabText(
+            self.tab_widget.currentIndex(),
+            (
+                self.fm.file_name.split("/")[-1]
+                if self.fm.file_name is not None
+                else "New Figure"
+            ),
+        )
 
     def save_as_file(self):
         options = QFileDialog.Options()
@@ -304,85 +317,11 @@ class MainWindow(QMainWindow):
 
     def export_figure(self):
         old_dpi = self.fm.figure.get_dpi()
-        dialog = ExportFigureDialog(self.preferences, self.fm.figure)
-        dialog.exec()
-        self.fm.canvas.draw()
+        ExportFigureDialog(self.preferences, self.fm.figure)
         if self.preferences.get("debug"):
             print("Exported figure")
         self.fm.figure.set_dpi(old_dpi)
         self.fm.canvas.draw()
-
-    def quit(self):
-        if self.fm.unsaved_changes:
-            res = self.save_work_dialog()
-            if res == QMessageBox.Save:
-                self.save_file()
-            elif res == QMessageBox.Discard:
-                self.close()
-            elif res == QMessageBox.Cancel:
-                return
-        else:
-            self.close()
-
-    def open_plugins_folder(self):
-        path = self.preferences.get("plugin_directory")
-        QDesktopServices.openUrl(QUrl.fromLocalFile(path))
-
-    def plugins_documentation(self):
-        url = QUrl("https://github.com/nogula/FigureForge/wiki/Plugins")
-        QDesktopServices.openUrl(url)
-
-    def about_pressed(self):
-        dialog = QDialog()
-        dialog.setWindowTitle("About FigureForge")
-        dialog.setWindowIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
-        )
-        layout = QGridLayout()
-
-        logo = QLabel()
-        logo.setPixmap(
-            QPixmap(os.path.join(CURRENT_DIR, "resources/assets/logo_color_text.png"))
-        )
-        logo.setScaledContents(True)
-        logo.setFixedSize(QSize(100, 100))
-
-        layout.addWidget(logo, 0, 0)
-
-        text_layout = QVBoxLayout()
-        text_widget = QWidget()
-        text_widget.setLayout(text_layout)
-        text_layout.setContentsMargins(0, 0, 0, 0)
-        text_layout.setSpacing(0)
-
-        label1 = QLabel(
-            "FigureForge is a GUI tool for creating and editing matplotlib figures."
-        )
-        label2 = QLabel(
-            'Visit the <a href="https://github.com/nogula/FigureForge">project homepage</a> for more information.'
-        )
-        label3 = QLabel(f"Version {__version__}")
-        label4 = QLabel("Copyright 2024 Noah Gula")
-        text_layout.addWidget(label1)
-        text_layout.addWidget(label2)
-
-        text_layout.addSpacing(10)
-
-        text_layout.addWidget(label3)
-        text_layout.addWidget(label4)
-        layout.addWidget(text_widget, 0, 1, Qt.AlignTop)
-
-        dialog.setLayout(layout)
-        dialog.exec()
-
-    def help_pressed(self):
-        """Goes to the Wiki on the GitHub page."""
-        url = QUrl("https://github.com/nogula/FigureForge/wiki")
-        QDesktopServices.openUrl(url)
-
-    def bug_pressed(self):
-        dialog = BugReportDialog(self)
-        dialog.exec()
 
     def load_plugins(self, reload=False):
         self.splash.showMessage("Loading Plugins...", Qt.AlignBottom | Qt.AlignLeft)
@@ -422,7 +361,6 @@ class MainWindow(QMainWindow):
         for file_name in os.listdir(plugin_dir):
             if file_name.endswith(".py"):
                 module_name = file_name[:-3]
-                module_path = os.path.join(plugin_dir, file_name)
                 try:
                     module = importlib.import_module(
                         f"FigureForge.plugins.{module_name}"
@@ -443,7 +381,7 @@ class MainWindow(QMainWindow):
                             if hasattr(cls, "icon"):
                                 action.setIcon(QIcon(cls.icon))
                             action.triggered.connect(
-                                lambda checked, obj=cls: self.run_plugin(obj)
+                                lambda _, obj=cls: self.run_plugin(obj)
                             )
                             if reload:
                                 if hasattr(cls, "submenu"):
@@ -459,7 +397,6 @@ class MainWindow(QMainWindow):
                                             ],
                                             QMenu(cls.submenu),
                                         )
-                                        # submenu.setToolTipsVisible(True)
                                         submenu.menu().addAction(action)
                                     else:
                                         submenu.menu().addAction(action)
@@ -502,9 +439,6 @@ class MainWindow(QMainWindow):
             self.fm.unsaved_changes = True
             self.fm.fe.build_tree(self.fm.figure, selected_obj)
 
-    def delete_item(self):
-        self.fm.delete_obj()
-
     def reload_plugins(self):
         actions = self.plugin_menu.actions()
         total_actions = len(actions)
@@ -528,44 +462,7 @@ class MainWindow(QMainWindow):
             new_plugin_file.write(template)
         self.reload_plugins()
 
-        # Create dialog to let use copy the path to the clipboard or open the file
-        dialog = QDialog()
-        dialog.setWindowTitle("New Plugin Created")
-        dialog.setWindowIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
-        )
-        layout = QVBoxLayout()
-        message = QLabel(f"New plugin created at:\n{new_plugin_filename}")
-        layout.addWidget(message)
-        button_layout = QHBoxLayout()
-        button_layout.addStretch()
-        ok_button = QPushButton("OK")
-        copy_button = QPushButton("Copy Path")
-        open_button = QPushButton("Open Folder")
-        for button in [copy_button, open_button, ok_button]:
-            button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-            button.setFixedWidth(100)
-            button.clicked.connect(dialog.close)
-            button_layout.addWidget(button)
-        copy_button.clicked.connect(
-            lambda: QApplication.clipboard().setText(new_plugin_filename)
-        )
-        open_button.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl.fromLocalFile(plugin_dir))
-        )
-        ok_button.setDefault(True)
-        layout.addLayout(button_layout)
-
-        dialog.setLayout(layout)
-        dialog.exec()
-
-    def reload_json_structure(self):
-        self.fm.load_json_structure()
-        print("Reloaded JSON structure.")
-
-    def show_preferences_dialog(self):
-        dialog = PreferencesDialog(self.preferences, self)
-        dialog.exec_()
+        NewPluginDialog(new_plugin_filename, plugin_dir)
 
     def copy_figure(self):
         buf = BytesIO()
@@ -578,77 +475,23 @@ class MainWindow(QMainWindow):
         clipboard.setPixmap(image)
         buf.close()
 
-    def show_welcome_dialog(self):
-        if not self.preferences.get("show_welcome"):
-            return
-
-        dialog = QDialog()
-        dialog.setWindowTitle(f"Welcome to FigureForge {__version__}")
-        dialog.setWindowIcon(
-            QIcon(os.path.join(CURRENT_DIR, "resources/assets/logo.ico"))
-        )
-        layout = QVBoxLayout()
-
-        logo = QLabel()
-        logo.setPixmap(
-            QPixmap(os.path.join(CURRENT_DIR, "resources/assets/logo_color_text.png"))
-        )
-        logo.setScaledContents(True)
-        logo.setFixedSize(QSize(100, 100))
-
-        layout.addWidget(logo, alignment=Qt.AlignCenter)
-
-        description = QLabel(
-            "FigureForge is a GUI tool for creating and editing matplotlib figures."
-        )
-        layout.addWidget(description, alignment=Qt.AlignLeft)
-
-        documentation_link = QLabel(
-            'For more information, please visit the <a href="https://github.com/nogula/FigureForge/wiki">documentation</a>.'
-        )
-        documentation_link.setOpenExternalLinks(True)
-        layout.addWidget(documentation_link, alignment=Qt.AlignLeft)
-
-        bottom_row = QHBoxLayout()
-
-        display_at_startup = QCheckBox("Display this dialog at startup")
-        display_at_startup.setChecked(True)
-        bottom_row.addWidget(display_at_startup)
-        bottom_row.addStretch()
-        close_button = QPushButton("Close")
-        close_button.clicked.connect(dialog.close)
-        bottom_row.addWidget(close_button)
-
-        layout.addLayout(bottom_row)
-
-        dialog.setLayout(layout)
-        dialog.exec()
-        if display_at_startup.isChecked():
-            self.preferences.set("show_welcome", True)
-        else:
-            self.preferences.set("show_welcome", False)
-
     def get_recent_files(self):
         self.open_recent_menu.clear()
         for file in self.preferences.get("recent_files"):
             action = QAction(file, self)
-            action.triggered.connect(
-                lambda checked, file=file: self.open_recent_file(file)
-            )
+            action.triggered.connect(lambda _, file=file: self.open_recent_file(file))
             self.open_recent_menu.addAction(action)
 
     def open_recent_file(self, file):
-        if self.fm.unsaved_changes:
-            res = self.save_work_dialog()
-            if res == QMessageBox.Save:
-                self.save_file()
-            elif res == QMessageBox.Discard:
-                pass
-            elif res == QMessageBox.Cancel:
-                return
+        if not self.check_for_save(self.fm):
+            return
         self.fm.file_name = file
         self.fm.load_figure(self.fm.file_name)
-        tab_title = self.fm.file_name.split("/")[-1]
+        tab_title = (
+            self.fm.file_name.split("/")[-1]
+            if self.fm.file_name is not None
+            else "New Figure"
+        )
         self.tab_widget.setTabText(self.tab_widget.currentIndex(), tab_title)
 
     def update_recent_files(self):
@@ -675,67 +518,31 @@ class MainWindow(QMainWindow):
             pass
 
     def close_tab(self, index):
-        if self.figure_managers[index].unsaved_changes:
-            res = self.save_work_dialog()
+        if not self.check_for_save(self.figure_managers[index]):
+            return
+        self.figure_managers.pop(index)
+        self.tab_widget.removeTab(index)
+
+    def quit(self):
+        if not self.check_for_save(self.fm):
+            return
+        else:
+            self.close()
+
+    def closeEvent(self, event):
+        for fm in self.figure_managers:
+            if not self.check_for_save(fm):
+                event.ignore()
+                return
+        event.accept()
+
+    def check_for_save(self, fm):
+        if fm.unsaved_changes:
+            res = SaveWorkDialog(fm.file_name)
             if res == QMessageBox.Save:
                 self.save_file()
             elif res == QMessageBox.Discard:
                 pass
             elif res == QMessageBox.Cancel:
-                return
-        self.figure_managers.pop(index)
-        self.tab_widget.removeTab(index)
-
-    def closeEvent(self, event):
-        for fm in self.figure_managers:
-            if fm.unsaved_changes:
-                res = self.save_work_dialog()
-                if res == QMessageBox.Save:
-                    self.save_file()
-                elif res == QMessageBox.Discard:
-                    pass
-                elif res == QMessageBox.Cancel:
-                    event.ignore()
-                    return
-        event.accept()
-
-    def check_for_updates(self):
-        url = "https://api.github.com/repos/nogula/FigureForge/releases/latest"
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            data = response.json()
-            latest_version = data["tag_name"]
-            if latest_version != "v"+__version__:
-                dialog = QDialog()
-                dialog.setWindowTitle("Update Available")
-                layout = QVBoxLayout()
-                message = QLabel(
-                    f"An update is available. Your version: v{__version__}, Latest version: {latest_version}"
-                )
-                layout.addWidget(message)
-                check = QCheckBox("Check for updates at startup")
-                check.setChecked(True)
-                layout.addWidget(check)
-                button_layout = QHBoxLayout()
-                button_layout.addStretch()
-                update_button = QPushButton("Update")
-                update_button.clicked.connect(
-                    lambda: QDesktopServices.openUrl(
-                        QUrl("https://github.com/nogula/FigureForge/releases/latest")
-                    )
-                )
-                update_button.clicked.connect(dialog.close)
-                button_layout.addWidget(update_button)
-                update_button.setDefault(True)
-                close_button = QPushButton("Close")
-                close_button.clicked.connect(dialog.close)
-                button_layout.addWidget(close_button)
-                layout.addLayout(button_layout)
-                dialog.setLayout(layout)
-                dialog.exec()
-                if not check.isChecked():
-                    self.preferences.set("check_for_updates", False)
-        except Exception as e:
-            print(f"Failed to check for updates: {e}")
-
+                return False
+        return True

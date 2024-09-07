@@ -15,12 +15,14 @@ from PySide6.QtCore import Signal
 from PySide6.QtGui import QColor, QFont
 from PySide6.QtCore import Qt
 
-from FigureForge.color_button import ColorButton
-from FigureForge.custom_spinbox import SpinBox
-from FigureForge.tuple_property import TupleProperty
-from FigureForge.dict_property import DictProperty
+from FigureForge.widgets.ff_widgets import (
+    ColorButton,
+    SpinBox,
+    TupleProperty,
+    DictProperty,
+)
 import matplotlib.colors as mcolors
-import matplotlib.font_manager as fm
+import matplotlib.font_manager as mpl_fm
 
 
 class PropertyInspector(QWidget):
@@ -152,7 +154,7 @@ class PropertyInspector(QWidget):
             self.content_layout.addWidget(value_widget, row, 2)
         elif value_type == "font":
             value_widget = QComboBox()
-            font_names = sorted(set(f.name for f in fm.fontManager.ttflist))
+            font_names = sorted(set(f.name for f in mpl_fm.fontManager.ttflist))
             for font_name in font_names:
                 value_widget.addItem(font_name)
                 font = QFont(font_name)
