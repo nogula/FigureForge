@@ -137,7 +137,7 @@ class MainWindow(QMainWindow):
         edit_menu.addAction(copy_figure_action)
 
         delete_item_action = QAction("Delete Item", self)
-        delete_item_action.triggered.connect(lambda: self.fm.delete_item())
+        delete_item_action.triggered.connect(lambda: self.fm.delete_obj())
         delete_item_action.setIcon(QIcon(os.path.join(ICONS_DIR, "delete_icon.png")))
         delete_item_action.setShortcut("Del")
         edit_menu.addAction(delete_item_action)
