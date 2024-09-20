@@ -17,7 +17,6 @@ def _load_plugins():
                     if hasattr(obj, "run"):
                         plugin_instance = obj()
                         globals()[module_name] = plugin_instance.run
-                        print(f"Loaded plugin: {module_name}")
                         break
 
 
