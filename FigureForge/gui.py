@@ -262,7 +262,16 @@ class MainWindow(QMainWindow):
         )
         if file_name:
             self.fm.file_name = file_name
-            self.fm.load_figure(self.fm.file_name)
+            try:
+                self.fm.load_figure(self.fm.file_name)
+            except Exception as e:
+                msgbox = QMessageBox()
+                msgbox.setIcon(QMessageBox.Critical)
+                msgbox.setWindowTitle("File Error")
+                msgbox.setText("Failed to open file.")
+                msgbox.setInformativeText(str(e))
+                msgbox.exec_()
+                return
             tab_title = (
                 self.fm.file_name.split("/")[-1]
                 if self.fm.file_name is not None
