@@ -4,6 +4,7 @@ import subprocess
 import importlib
 import inspect
 from io import BytesIO
+from copy import deepcopy
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -123,6 +124,11 @@ class MainWindow(QMainWindow):
         file_menu.addAction(quit_action)
 
         edit_menu = menubar.addMenu("Edit")
+
+        open_plt_action = QAction("Open in Matplotlib", self)
+        open_plt_action.triggered.connect(self.try_open_matplotlib)
+        open_plt_action.setIcon(QIcon(os.path.join(ICONS_DIR, "open_icon.png")))
+        edit_menu.addAction(open_plt_action)
 
         copy_figure_action = QAction("Copy Figure", self)
         copy_figure_action.triggered.connect(self.copy_figure)
@@ -520,3 +526,17 @@ class MainWindow(QMainWindow):
             elif res == QMessageBox.Cancel:
                 return False
         return True
+    
+    def try_open_matplotlib(self):
+        try:
+            # import matplotlib.pyplot as plt
+            # plt.show()
+            figure = deepcopy(self.fm.figure)
+            figure.show()
+        except Exception as e:
+            msgbox = QMessageBox()
+            msgbox.setIcon(QMessageBox.Critical)
+            msgbox.setWindowTitle("Matplotlib Error")
+            msgbox.setText("Failed to open Matplotlib.")
+            msgbox.setInformativeText(str(e))
+            msgbox.exec_()

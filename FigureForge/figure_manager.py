@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Signal
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import numpy as np
 
@@ -275,7 +276,7 @@ class FigureManager(QWidget):
             setattr(obj, attrs[-1], value)
 
 
-def create_default_figure() -> Figure:
+def create_default_figure():
     """
     Creates a default figure.
 
@@ -297,8 +298,7 @@ def create_default_figure() -> Figure:
     data = np.random.randn(100, 4)
 
     # Create the figure
-    fig = Figure()
-    axs = fig.subplots(2, 2)
+    fig, axs = plt.subplots(2,2)
     fig.suptitle("FigureForge Demo Figure", fontsize=16, label="suptitle")
 
     # Line plot
