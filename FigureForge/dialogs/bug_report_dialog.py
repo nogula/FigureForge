@@ -14,9 +14,11 @@ from PySide6.QtCore import QSize, Qt
 
 from FigureForge.__init__ import ASSETS_DIR, __version__
 from PySide6.__init__ import __version__ as pyside_version
+
 # Build errors with nuikta when trying to get mpl version as
 # "from matplotlib.__init__ import __version__ as mpl_version" so this is the workaround
 import matplotlib
+
 mpl_version = matplotlib.__version__
 
 
@@ -25,16 +27,12 @@ class BugReportDialog(QDialog):
         super(BugReportDialog, self).__init__(parent)
 
         self.setWindowTitle("FigureForge Bug Report")
-        self.setWindowIcon(
-            QIcon(os.path.join(ASSETS_DIR, "logo.ico"))
-        )
+        self.setWindowIcon(QIcon(os.path.join(ASSETS_DIR, "logo.ico")))
 
         layout = QGridLayout()
 
         logo = QLabel()
-        logo.setPixmap(
-            QPixmap(os.path.join(ASSETS_DIR, "logo_color_text.png"))
-        )
+        logo.setPixmap(QPixmap(os.path.join(ASSETS_DIR, "logo_color_text.png")))
         logo.setScaledContents(True)
         logo.setFixedSize(QSize(100, 100))
 

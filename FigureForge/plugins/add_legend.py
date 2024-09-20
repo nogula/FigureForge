@@ -28,7 +28,3 @@ class AddLegend:
             legend = dialog.get_legend()
             print(legend)
             obj.legend(**legend)
-            msg_success = QMessageBox()
-            msg_success.setText("Legend added successfully.")
-            msg_success.setIcon(QMessageBox.Information)
-            msg_success.exec()

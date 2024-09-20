@@ -27,7 +27,7 @@ from FigureForge.__init__ import (
     CURRENT_DIR,
     ASSETS_DIR,
 )
-from FigureForge.dialogs.ff_dialogs import (   
+from FigureForge.dialogs.ff_dialogs import (
     check_for_updates,
     NewPluginDialog,
     ExportFigureDialog,
@@ -44,9 +44,7 @@ class MainWindow(QMainWindow):
     def __init__(self, splash, figure):
         super().__init__()
         self.setWindowTitle("FigureForge")
-        self.setWindowIcon(
-            QIcon(os.path.join(ASSETS_DIR, "logo.ico"))
-        )
+        self.setWindowIcon(QIcon(os.path.join(ASSETS_DIR, "logo.ico")))
         self.setMinimumSize(800, 600)
 
         self.splash = splash
@@ -81,17 +79,13 @@ class MainWindow(QMainWindow):
         file_menu = menubar.addMenu("File")
 
         new_action = QAction("New", self)
-        new_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "new_icon.png"))
-        )
+        new_action.setIcon(QIcon(os.path.join(ICONS_DIR, "new_icon.png")))
         new_action.setShortcut("Ctrl+N")
         new_action.triggered.connect(self.new_file)
         file_menu.addAction(new_action)
 
         open_action = QAction("Open...", self)
-        open_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "open_icon.png"))
-        )
+        open_action.setIcon(QIcon(os.path.join(ICONS_DIR, "open_icon.png")))
         open_action.setShortcut("Ctrl+O")
         open_action.triggered.connect(self.open_file)
         file_menu.addAction(open_action)
@@ -101,17 +95,13 @@ class MainWindow(QMainWindow):
         self.get_recent_files()
 
         save_action = QAction("Save", self)
-        save_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "save_icon.png"))
-        )
+        save_action.setIcon(QIcon(os.path.join(ICONS_DIR, "save_icon.png")))
         save_action.setShortcut("Ctrl+S")
         save_action.triggered.connect(self.save_file)
         file_menu.addAction(save_action)
 
         save_as_action = QAction("Save As...", self)
-        save_as_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "save_as_icon.png"))
-        )
+        save_as_action.setIcon(QIcon(os.path.join(ICONS_DIR, "save_as_icon.png")))
         save_as_action.setShortcut("Ctrl+Shift+S")
         save_as_action.triggered.connect(self.save_as_file)
         file_menu.addAction(save_as_action)
@@ -120,9 +110,7 @@ class MainWindow(QMainWindow):
 
         export_action = QAction("Export", self)
         export_action.triggered.connect(self.export_figure)
-        export_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "export_icon.png"))
-        )
+        export_action.setIcon(QIcon(os.path.join(ICONS_DIR, "export_icon.png")))
         export_action.setShortcut("Ctrl+E")
         file_menu.addAction(export_action)
 
@@ -130,9 +118,7 @@ class MainWindow(QMainWindow):
 
         quit_action = QAction("Quit", self)
         quit_action.triggered.connect(self.quit)
-        quit_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "quit_icon.png"))
-        )
+        quit_action.setIcon(QIcon(os.path.join(ICONS_DIR, "quit_icon.png")))
         quit_action.setShortcut("Ctrl+Q")
         file_menu.addAction(quit_action)
 
@@ -140,17 +126,13 @@ class MainWindow(QMainWindow):
 
         copy_figure_action = QAction("Copy Figure", self)
         copy_figure_action.triggered.connect(self.copy_figure)
-        copy_figure_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "copy_icon.png"))
-        )
+        copy_figure_action.setIcon(QIcon(os.path.join(ICONS_DIR, "copy_icon.png")))
         copy_figure_action.setShortcut("Ctrl+C")
         edit_menu.addAction(copy_figure_action)
 
         delete_item_action = QAction("Delete Item", self)
         delete_item_action.triggered.connect(lambda: self.fm.delete_item())
-        delete_item_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "delete_icon.png"))
-        )
+        delete_item_action.setIcon(QIcon(os.path.join(ICONS_DIR, "delete_icon.png")))
         delete_item_action.setShortcut("Del")
         edit_menu.addAction(delete_item_action)
 
@@ -196,18 +178,14 @@ class MainWindow(QMainWindow):
         self.plugin_menu.addAction(plugins_documentation_action)
         new_plugin_action = QAction("New Plugin", self)
         new_plugin_action.triggered.connect(self.new_plugin)
-        new_plugin_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "new_icon.png"))
-        )
+        new_plugin_action.setIcon(QIcon(os.path.join(ICONS_DIR, "new_icon.png")))
         self.plugin_menu.addAction(new_plugin_action)
 
         help_menu = menubar.addMenu("Help")
 
         about_action = QAction("About", self)
         about_action.triggered.connect(lambda: AboutDialog())
-        about_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "about_icon.png"))
-        )
+        about_action.setIcon(QIcon(os.path.join(ICONS_DIR, "about_icon.png")))
         help_menu.addAction(about_action)
 
         help_action = QAction("Help", self)
@@ -216,16 +194,12 @@ class MainWindow(QMainWindow):
                 QUrl("https://github.com/nogula/FigureForge/wiki")
             )
         )
-        help_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "documentation_icon.png"))
-        )
+        help_action.setIcon(QIcon(os.path.join(ICONS_DIR, "documentation_icon.png")))
         help_menu.addAction(help_action)
 
         bug_action = QAction("Report Bug", self)
         bug_action.triggered.connect(lambda: BugReportDialog(self))
-        bug_action.setIcon(
-            QIcon(os.path.join(ICONS_DIR, "bug_icon.png"))
-        )
+        bug_action.setIcon(QIcon(os.path.join(ICONS_DIR, "bug_icon.png")))
         help_menu.addAction(bug_action)
 
     def init_ui(self, figure):
