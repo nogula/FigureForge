@@ -2,7 +2,7 @@ import os
 import sys
 import importlib
 import inspect
-from FigureForge import PLUGINS_DIR
+from FigureForge.__init__ import PLUGINS_DIR
 
 
 def _load_plugins():
