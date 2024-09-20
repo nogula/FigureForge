@@ -15,7 +15,7 @@ class SetSpineBounds:
     def run(self, ax):
         if not isinstance(ax, Axes):
             msg_failure = QMessageBox()
-            msg_failure.setText(f"Invalid object type: {type(ax)}.")
+            msg_failure.setText(f"Invalid object type: {type(ax)}. Must be an Axes.")
             msg_failure.setIcon(QMessageBox.Warning)
             msg_failure.exec()
             return

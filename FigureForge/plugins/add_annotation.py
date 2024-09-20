@@ -28,7 +28,3 @@ class AddAnnotation:
             annotation = dialog.get_annotation()
             print(annotation)
             obj.annotate(**annotation)
-            msg_success = QMessageBox()
-            msg_success.setText("Annotations added successfully.")
-            msg_success.setIcon(QMessageBox.Information)
-            msg_success.exec()
