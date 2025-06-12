@@ -20,8 +20,6 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices, QIcon, QAction, QPixmap
 
-import qdarktheme
-
 from FigureForge.__init__ import (
     __version__,
     ICONS_DIR,
@@ -51,7 +49,6 @@ class MainWindow(QMainWindow):
         self.splash = splash
 
         self.preferences = Preferences()
-        qdarktheme.setup_theme(self.preferences.get("theme"))
 
         self.create_menus()
         self.init_ui(figure)
