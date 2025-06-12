@@ -17,6 +17,8 @@ from PySide6.QtWidgets import (
     QDialogButtonBox,
 )
 
+import qdarktheme
+
 from FigureForge.__init__ import CURRENT_DIR
 from FigureForge import __version__
 
@@ -33,6 +35,7 @@ class Preferences:
                 CURRENT_DIR, "plugins", "requirements.txt"
             ),
             "last_export_path": "",
+            "theme": "light",
             "debug": False,
             "show_welcome": True,
             "recent_files": [],
@@ -90,6 +93,8 @@ class Preferences:
 
     def set(self, key, value):
         self.preferences[key] = value
+        if key == "theme":
+            qdarktheme.setup_theme(value)
         self.save_preferences()
 
 
@@ -125,6 +130,13 @@ class PreferencesDialog(QDialog):
             QLabel("Plugin Requirements File:"), plugin_requirements_layout
         )
 
+        self.theme_combo = QComboBox(self)
+        self.theme_combo.addItems(["auto", "light", "dark"])
+        self.theme_combo.setCurrentText(self.preferences.get("theme"))
+        theme_layout = QHBoxLayout()
+        theme_layout.addWidget(self.theme_combo)
+        form_layout.addRow(QLabel("Theme:"), theme_layout)
+
         self.debug_checkbox = QCheckBox(self)
         self.debug_checkbox.setChecked(self.preferences.get("debug"))
         form_layout.addRow(QLabel("Debug Mode:"), self.debug_checkbox)
@@ -157,5 +169,6 @@ class PreferencesDialog(QDialog):
         self.preferences.set(
             "plugin_requirements", self.plugin_requirements_edit.text()
         )
+        self.preferences.set("theme", self.theme_combo.currentText())
         self.preferences.set("debug", self.debug_checkbox.isChecked())
         self.accept()
