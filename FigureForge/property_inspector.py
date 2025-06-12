@@ -120,10 +120,6 @@ class PropertyInspector(QWidget):
             self.content_layout.addWidget(value_widget, row, 2)
         elif value_type == "float":
             value_widget = SpinBox()
-            try:
-                value_widget.setValue(value)
-            except (TypeError,ValueError):
-                value_widget.setValue(0.0)
             value_widget.valueChanged.connect(
                 lambda n=name, w=value_widget: self.on_value_changed(n, w)
             )
