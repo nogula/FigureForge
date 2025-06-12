@@ -10,14 +10,18 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "<3.14,>=3.9"
-numpy = "~1"
+python = "<3.14,>=3.11"
 pandas = "^2.2.2"
 matplotlib = "^3.9.1"
 PySide6 = "^6.7.2"
 importlib = "^1.0.4"
 appdirs = "^1.4.4"
 requests = "^2.26.0"
+<<<<<<< HEAD
+=======
+pyqtdarktheme-fork = "^2.3.4"
+numpy = "^2.3.0"
+>>>>>>> 0a32c9aded288c1d76dbea393f5da1897e4cca4f
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
