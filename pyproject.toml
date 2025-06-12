@@ -11,7 +11,6 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "<3.14,>=3.11"
-pandas = "^2.2.2"
 matplotlib = "^3.9.1"
 PySide6 = "^6.7.2"
 importlib = "^1.0.4"

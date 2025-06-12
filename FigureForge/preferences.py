@@ -34,8 +34,8 @@ class Preferences:
             "plugin_requirements": os.path.join(
                 CURRENT_DIR, "plugins", "requirements.txt"
             ),
-            "theme": "dark",
             "last_export_path": "",
+            "theme": "light",
             "debug": False,
             "show_welcome": True,
             "recent_files": [],
