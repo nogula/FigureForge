@@ -9,7 +9,7 @@ def run(figure=None):
     main(figure)
 
 
-__version__ = "0.3.3"
+__version__ = "0.3.2"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(CURRENT_DIR, "resources", "assets")
 ICONS_DIR = os.path.join(CURRENT_DIR, "resources", "icons")
