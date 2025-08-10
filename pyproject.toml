@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "FigureForge"
-version = "0.3.2"
+version = "0.3.3"
 description = ""
 authors = ["Noah Gula <noahrgula@gmail.com>"]
 readme = "README.md"
@@ -17,7 +17,7 @@ importlib = "^1.0.4"
 appdirs = "^1.4.4"
 requests = "^2.26.0"
 pyqtdarktheme-fork = "^2.3.4"
-numpy = "^2.3.0"
+numpy = "^1.26.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
