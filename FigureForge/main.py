@@ -11,7 +11,7 @@ from FigureForge.gui import MainWindow
 from FigureForge.__init__ import CURRENT_DIR
 
 
-def create_splash() -> QSplashScreen:
+def create_splash(no_show_splash) -> QSplashScreen:
     """
     Creates and displays a splash screen with a loading message.
 
@@ -21,11 +21,12 @@ def create_splash() -> QSplashScreen:
     pixmap = QPixmap(os.path.join(CURRENT_DIR, "resources", "assets", "splash.png"))
     splash = QSplashScreen(pixmap)
     splash.showMessage("Loading FigureForge...", Qt.AlignBottom | Qt.AlignLeft)
-    splash.show()
+    if not no_show_splash:
+        splash.show()
     return splash
 
 
-def main(figure: Figure | None = None) -> Figure:
+def main(figure: Figure | None = None, no_show_splash=False) -> Figure:
     """
     Entry point of the application.
 
@@ -36,7 +37,7 @@ def main(figure: Figure | None = None) -> Figure:
         app = QApplication(sys.argv)
     else:
         app = QApplication.instance()
-    splash = create_splash()
+    splash = create_splash(no_show_splash)
     window = MainWindow(splash, figure)
     window.show()
     splash.finish(window)
