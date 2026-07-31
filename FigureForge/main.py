@@ -26,7 +26,7 @@ def create_splash(no_show_splash) -> QSplashScreen:
     return splash
 
 
-def main(figure: Figure | None = None, no_show_splash=False) -> Figure:
+def main(figure: Figure | None = None) -> Figure:
     """
     Entry point of the application.
 
@@ -49,6 +49,19 @@ def main(figure: Figure | None = None, no_show_splash=False) -> Figure:
 
     app.aboutToQuit.connect(get_figure)
     app.exec()
+
+def create_MainWindow(figure: Figure | None = None, no_show_splash=True) -> MainWindow:
+    """
+    Create and return a MainWindow of FigureForge and let the caller handel the rest.
+    """
+
+    splash = create_splash(no_show_splash)
+    window = MainWindow(splash, figure)
+
+    splash.finish(window)
+    window.hide()
+
+    return window
 
 
 if __name__ == "__main__":

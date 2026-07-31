@@ -2,11 +2,10 @@ import os
 
 import FigureForge.plugins as plugins
 
-
-def run(figure=None, no_show_splash=False):
+def run(figure=None):
     from .main import main
 
-    main(figure, no_show_splash)
+    main(figure)
 
 
 __version__ = "0.3.3"
