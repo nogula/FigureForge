@@ -37,7 +37,7 @@ def main(figure: Figure | None = None) -> Figure:
         app = QApplication(sys.argv)
     else:
         app = QApplication.instance()
-    splash = create_splash(no_show_splash)
+    splash = create_splash()
     window = MainWindow(splash, figure)
     window.show()
     splash.finish(window)

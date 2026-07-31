@@ -2,6 +2,7 @@ import os
 
 import FigureForge.plugins as plugins
 
+
 def run(figure=None):
     from .main import main
 
