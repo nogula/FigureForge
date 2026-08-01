@@ -46,6 +46,7 @@ class FigureManager(QWidget):
 
         self.pi = PropertyInspector()
         self.fe = FigureExplorer()
+        self.pi.setMinimumSize(300, 300)
 
         # Setup the figure and canvas
         self.figure = Figure()

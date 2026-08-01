@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
+    QVBoxLayout,
     QSpinBox,
     QLineEdit,
     QCheckBox,
@@ -23,7 +24,7 @@ class TupleProperty(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.layout = QHBoxLayout()
+        self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
 
         self.setLayout(self.layout)

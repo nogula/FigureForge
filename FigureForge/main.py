@@ -11,7 +11,7 @@ from FigureForge.gui import MainWindow
 from FigureForge.__init__ import CURRENT_DIR
 
 
-def create_splash(no_show_splash) -> QSplashScreen:
+def create_splash(no_show_splash=False) -> QSplashScreen:
     """
     Creates and displays a splash screen with a loading message.
 

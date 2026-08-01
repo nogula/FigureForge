@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("FigureForge")
         self.setWindowIcon(QIcon(os.path.join(ASSETS_DIR, "logo.ico")))
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(900, 600)
 
         self.splash = splash
 
