@@ -49,16 +49,11 @@ class FigureManager(QWidget):
         self.pi.setMinimumSize(300, 300)
 
         # Setup the figure and canvas
-        self.figure = Figure()
+        self.figure = figure if figure is not None else create_default_figure()
         self.canvas = FigureCanvas(self.figure)
         self.unsaved_changes = False
         self.file_name = None
 
-        self.new_figure()
-        if figure is not None:
-            self.figure.__dict__.update(figure.__dict__)
-        else:
-            self.figure.__dict__.update(create_default_figure().__dict__)
         self.canvas.draw()
         self.fe.build_tree(self.figure)
 
@@ -67,6 +62,9 @@ class FigureManager(QWidget):
         self.fe.refreshTree.connect(lambda: self.load_figure(self.file_name))
         self.pi.propertyChanged.connect(self.on_property_changed)
         self.selected_obj = None
+
+        # Connect for plot interaction
+        self.canvas.mpl_connect("pick_event", self.on_pick)
 
         # Load the JSON figure property structure as a dict
         self.load_json_structure()
@@ -90,10 +88,9 @@ class FigureManager(QWidget):
         """
         if file_name is None:
             return
-        self.new_figure()
         with open(file_name, "rb") as f:
             data = pickle.load(f)
-        self.figure.__dict__.update(data.__dict__)
+        self._set_figure(data)
         self.canvas.draw()
         self.unsaved_changes = False
         self.updateLabel.emit(
@@ -248,6 +245,11 @@ class FigureManager(QWidget):
                 value = value
         return value
 
+    def _set_figure(self, figure: Figure) -> None:
+        self.figure = figure
+        self.canvas.figure = self.figure
+        self.figure.set_canvas(self.canvas)
+
     def set_value(self, obj, attr_path: str, value) -> None:
         """
         Sets the value of an attribute of an object. Attempts to discern whether
@@ -276,6 +278,10 @@ class FigureManager(QWidget):
                 print(f"Setting {attr_path} to {value} on {obj}")
             setattr(obj, attrs[-1], value)
 
+    def on_pick(self, event):
+        artist = event.artist
+        print(f"Picked {artist}")
+        self.on_item_selected(artist)
 
 def create_default_figure():
     """

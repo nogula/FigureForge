@@ -14,10 +14,15 @@ from PySide6.QtGui import QIcon
 
 from FigureForge.__init__ import CURRENT_DIR
 
+import matplotlib as mpl
+
 
 class FigureExplorer(QWidget):
     itemSelected = Signal(object)
     refreshTree = Signal()
+
+    # These artists should be pickable
+    PICKABLE_ARTISTS = (mpl.lines.Line2D, mpl.legend.Legend, mpl.axes.Axes)
 
     def __init__(self):
         super().__init__()
@@ -54,6 +59,18 @@ class FigureExplorer(QWidget):
 
     def add_item(self, parent, child, last_obj):
         class_name = child.__class__.__name__
+
+        # Make pick-able artists that is directly under Figure or Axes pick-able
+        if isinstance(child, self.PICKABLE_ARTISTS) and isinstance(parent.reference, (mpl.axes.Axes, mpl.figure.Figure)):
+            child.set_picker(5)
+
+        # Make drag-able artists drag-able
+        if isinstance(child, mpl.text.Annotation):
+            child.draggable()
+        if isinstance(child, mpl.legend.Legend):
+            child.set_draggable(True)
+
+
         if child.get_label() != "":
             label = f"{class_name} - {child.get_label()}"
         else:

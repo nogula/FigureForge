@@ -25,6 +25,13 @@ class MainWindow(QWidget):
         fig, ax = plt.subplots(figsize=[4, 3])
         fig.dpi = 150
         ax.plot(xs, ys, 'o', label='some data')
+        ax.annotate('This is an annotation \nline2', (0, 0), 
+                    bbox=dict(
+                        facecolor="lightblue",  # Background color
+                        edgecolor="darkblue",   # Border color
+                        boxstyle="round,pad=0.5" # Optional: rounds corners
+                        )
+                    )
 
         ax.set_xlabel('x label')
         ax.set_ylabel('y label')
