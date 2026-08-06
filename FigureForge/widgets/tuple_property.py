@@ -2,6 +2,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
     QVBoxLayout,
+    QGridLayout,
     QSpinBox,
     QLineEdit,
     QCheckBox,
@@ -24,7 +25,7 @@ class TupleProperty(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.layout = QVBoxLayout()
+        self.layout = QGridLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
 
         self.setLayout(self.layout)
@@ -48,7 +49,7 @@ class TupleProperty(QWidget):
             else:
                 raise ValueError(f"Invalid type: {self.types[i]}")
 
-            self.layout.addWidget(widget)
+            self.layout.addWidget(widget, i // 2, i % 2)
             self.widgets.append(widget)
 
         self.set_values(self.values)
