@@ -10,12 +10,20 @@ from PySide6.QtCore import Signal
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from matplotlib.figure import Figure
 import numpy as np
 
 from FigureForge.__init__ import CURRENT_DIR
 from FigureForge.property_inspector import PropertyInspector
 from FigureForge.figure_explorer import FigureExplorer
+
+# This function find the artist's parent in the mpl tree
+def find_artist_parent(fig: mpl.figure.Figure, target_artist: mpl.artist.Artist):
+    for artist in [fig] + fig.findobj():
+        if target_artist in artist.get_children():
+            return artist
+    return None
 
 
 class FigureManager(QWidget):
@@ -280,7 +288,9 @@ class FigureManager(QWidget):
 
     def on_pick(self, event):
         artist = event.artist
-        print(f"Picked {artist}")
+        if hasattr(artist, "pick_parent_instead") and artist.pick_parent_instead:
+            artist = find_artist_parent(artist.get_figure(), artist)
+        self.fe.select_item_for_reference(artist)
         self.on_item_selected(artist)
 
 def create_default_figure():

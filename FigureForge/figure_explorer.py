@@ -22,8 +22,13 @@ class FigureExplorer(QWidget):
     refreshTree = Signal()
 
     # These artists should be pickable
-    PICKABLE_ARTISTS = (mpl.lines.Line2D, mpl.legend.Legend, mpl.axes.Axes)
-
+    PICKABLE_ARTISTS = (mpl.lines.Line2D, # Line and dots
+                        mpl.collections.PathCollection, # Scatter
+                        # mpl.patches.Rectangle, # Barplots
+                        mpl.collections.PolyCollection, # Stacked plots and fill-betweens
+                        mpl.image.AxesImage # Image
+                        )
+    
     def __init__(self):
         super().__init__()
         self.init_ui()
@@ -57,12 +62,34 @@ class FigureExplorer(QWidget):
             self.add_item(root, item, last_obj)
         self.tree.expandItem(root)
 
+    def select_item_for_reference(self, target):
+        item = self._find_item_by_reference_recursive(self.tree.invisibleRootItem(), target)
+        if item is None:
+            return None
+
+        parent = item.parent()
+        while parent is not None:
+            self.tree.expandItem(parent)
+            parent = parent.parent()
+
+        self.tree.setCurrentItem(item)
+        self.tree.scrollToItem(item)
+        return item
+
     def add_item(self, parent, child, last_obj):
         class_name = child.__class__.__name__
 
         # Make pick-able artists that is directly under Figure or Axes pick-able
-        if isinstance(child, self.PICKABLE_ARTISTS) and isinstance(parent.reference, (mpl.axes.Axes, mpl.figure.Figure)):
+        if (
+            isinstance(child, (mpl.legend.Legend, mpl.axes.Axes) + self.PICKABLE_ARTISTS)
+            and isinstance(parent.reference, (mpl.axes.Axes, mpl.figure.Figure))
+        ):
             child.set_picker(5)
+
+        # This make sure 
+        if isinstance(parent.reference, mpl.axis.Axis):
+            child.set_picker(5)
+            child.pick_parent_instead = True
 
         # Make drag-able artists drag-able
         if isinstance(child, mpl.text.Annotation):
@@ -87,3 +114,15 @@ class FigureExplorer(QWidget):
 
     def on_item_clicked(self, item):
         self.itemSelected.emit(item.reference)
+
+    def _find_item_by_reference_recursive(self, parent, target):
+        for index in range(parent.childCount()):
+            child = parent.child(index)
+            if getattr(child, "reference", None) is target:
+                return child
+
+            match = self._find_item_by_reference_recursive(child, target)
+            if match is not None:
+                return match
+
+        return None
