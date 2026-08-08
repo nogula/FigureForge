@@ -305,11 +305,9 @@ class MainWindow(QMainWindow):
         self.update_recent_files()
 
     def export_figure(self):
-        old_dpi = self.fm.figure.get_dpi()
-        ExportFigureDialog(self.preferences, self.fm.figure)
+        ExportFigureDialog(self.preferences, deepcopy(self.fm.figure))
         if self.preferences.get("debug"):
             print("Exported figure")
-        self.fm.figure.set_dpi(old_dpi)
         self.fm.canvas.draw()
 
     def load_plugins(self, reload=False):
