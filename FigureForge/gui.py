@@ -42,7 +42,7 @@ from FigureForge.preferences import Preferences, PreferencesDialog
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, splash, figure):
+    def __init__(self, splash, figure, block_set_theme=False):
         super().__init__()
         self.setWindowTitle("FigureForge")
         self.setWindowIcon(QIcon(os.path.join(ASSETS_DIR, "logo.ico")))
@@ -51,7 +51,8 @@ class MainWindow(QMainWindow):
         self.splash = splash
 
         self.preferences = Preferences()
-        qdarktheme.setup_theme(self.preferences.get("theme"))
+        if not block_set_theme:
+            qdarktheme.setup_theme(self.preferences.get("theme"))
 
         self.create_menus()
         self.init_ui(figure)

@@ -50,13 +50,13 @@ def main(figure: Figure | None = None) -> Figure:
     app.aboutToQuit.connect(get_figure)
     app.exec()
 
-def create_MainWindow(figure: Figure | None = None, no_show_splash=True) -> MainWindow:
+def create_MainWindow(figure: Figure | None = None, no_show_splash=True, block_set_theme=False) -> MainWindow:
     """
     Create and return a MainWindow of FigureForge and let the caller handel the rest.
     """
 
     splash = create_splash(no_show_splash)
-    window = MainWindow(splash, figure)
+    window = MainWindow(splash, figure, block_set_theme=block_set_theme)
 
     splash.finish(window)
     window.hide()
