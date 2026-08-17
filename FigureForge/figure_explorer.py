@@ -26,7 +26,8 @@ class FigureExplorer(QWidget):
                         mpl.collections.PathCollection, # Scatter
                         # mpl.patches.Rectangle, # Barplots
                         mpl.collections.PolyCollection, # Stacked plots and fill-betweens
-                        mpl.image.AxesImage # Image
+                        mpl.image.AxesImage, # Image
+                        mpl.text.Text
                         )
     
     def __init__(self):
