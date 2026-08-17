@@ -10,12 +10,20 @@ from PySide6.QtCore import Signal
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from matplotlib.figure import Figure
 import numpy as np
 
 from FigureForge.__init__ import CURRENT_DIR
 from FigureForge.property_inspector import PropertyInspector
 from FigureForge.figure_explorer import FigureExplorer
+
+# This function find the artist's parent in the mpl tree
+def find_artist_parent(fig: mpl.figure.Figure, target_artist: mpl.artist.Artist):
+    for artist in [fig] + fig.findobj():
+        if target_artist in artist.get_children():
+            return artist
+    return None
 
 
 class FigureManager(QWidget):
@@ -46,18 +54,14 @@ class FigureManager(QWidget):
 
         self.pi = PropertyInspector()
         self.fe = FigureExplorer()
+        self.pi.setMinimumSize(300, 300)
 
         # Setup the figure and canvas
-        self.figure = Figure()
+        self.figure = figure if figure is not None else create_default_figure()
         self.canvas = FigureCanvas(self.figure)
         self.unsaved_changes = False
         self.file_name = None
 
-        self.new_figure()
-        if figure is not None:
-            self.figure.__dict__.update(figure.__dict__)
-        else:
-            self.figure.__dict__.update(create_default_figure().__dict__)
         self.canvas.draw()
         self.fe.build_tree(self.figure)
 
@@ -66,6 +70,9 @@ class FigureManager(QWidget):
         self.fe.refreshTree.connect(lambda: self.load_figure(self.file_name))
         self.pi.propertyChanged.connect(self.on_property_changed)
         self.selected_obj = None
+
+        # Connect for plot interaction
+        self.canvas.mpl_connect("pick_event", self.on_pick)
 
         # Load the JSON figure property structure as a dict
         self.load_json_structure()
@@ -89,10 +96,9 @@ class FigureManager(QWidget):
         """
         if file_name is None:
             return
-        self.new_figure()
         with open(file_name, "rb") as f:
             data = pickle.load(f)
-        self.figure.__dict__.update(data.__dict__)
+        self._set_figure(data)
         self.canvas.draw()
         self.unsaved_changes = False
         self.updateLabel.emit(
@@ -247,6 +253,11 @@ class FigureManager(QWidget):
                 value = value
         return value
 
+    def _set_figure(self, figure: Figure) -> None:
+        self.figure = figure
+        self.canvas.figure = self.figure
+        self.figure.set_canvas(self.canvas)
+
     def set_value(self, obj, attr_path: str, value) -> None:
         """
         Sets the value of an attribute of an object. Attempts to discern whether
@@ -275,6 +286,12 @@ class FigureManager(QWidget):
                 print(f"Setting {attr_path} to {value} on {obj}")
             setattr(obj, attrs[-1], value)
 
+    def on_pick(self, event):
+        artist = event.artist
+        if hasattr(artist, "pick_parent_instead") and artist.pick_parent_instead:
+            artist = find_artist_parent(artist.get_figure(), artist)
+        self.fe.select_item_for_reference(artist)
+        self.on_item_selected(artist)
 
 def create_default_figure():
     """

@@ -42,16 +42,17 @@ from FigureForge.preferences import Preferences, PreferencesDialog
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, splash, figure):
+    def __init__(self, splash, figure, block_set_theme=False):
         super().__init__()
         self.setWindowTitle("FigureForge")
         self.setWindowIcon(QIcon(os.path.join(ASSETS_DIR, "logo.ico")))
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(900, 600)
 
         self.splash = splash
 
         self.preferences = Preferences()
-        qdarktheme.setup_theme(self.preferences.get("theme"))
+        if not block_set_theme:
+            qdarktheme.setup_theme(self.preferences.get("theme"))
 
         self.create_menus()
         self.init_ui(figure)
@@ -305,11 +306,9 @@ class MainWindow(QMainWindow):
         self.update_recent_files()
 
     def export_figure(self):
-        old_dpi = self.fm.figure.get_dpi()
-        ExportFigureDialog(self.preferences, self.fm.figure)
+        ExportFigureDialog(self.preferences, deepcopy(self.fm.figure))
         if self.preferences.get("debug"):
             print("Exported figure")
-        self.fm.figure.set_dpi(old_dpi)
         self.fm.canvas.draw()
 
     def load_plugins(self, reload=False):
